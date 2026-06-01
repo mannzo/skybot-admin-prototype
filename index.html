@@ -1,0 +1,3821 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SKYBOT Admin Panel V2</title>
+    <style>
+      :root {
+        --slate-950: #020617;
+        --slate-900: #0f172a;
+        --slate-800: #1e293b;
+        --slate-700: #334155;
+        --slate-600: #475569;
+        --slate-500: #64748b;
+        --slate-300: #cbd5e1;
+        --slate-200: #e2e8f0;
+        --slate-100: #f1f5f9;
+        --slate-50: #f8fafc;
+        --sky-700: #0369a1;
+        --sky-600: #0284c7;
+        --sky-100: #e0f2fe;
+        --sky-50: #f0f9ff;
+        --emerald-700: #047857;
+        --emerald-600: #059669;
+        --emerald-50: #ecfdf5;
+        --amber-700: #b45309;
+        --amber-50: #fffbeb;
+        --rose-700: #be123c;
+        --rose-50: #fff1f2;
+        --orange-700: #c2410c;
+        --orange-50: #fff7ed;
+        --white: #ffffff;
+        --shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--slate-900);
+        background: var(--slate-100);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      button,
+      select {
+        cursor: pointer;
+      }
+
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        width: 288px;
+        height: 100vh;
+        flex: 0 0 288px;
+        border-right: 1px solid var(--slate-200);
+        background: var(--white);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 80px;
+        padding: 0 24px;
+      }
+
+      .brand-lockup {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        overflow: hidden;
+        border-radius: 18px;
+        background: var(--white);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.1);
+      }
+
+      .brand-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .brand-title {
+        margin: 0;
+        color: var(--slate-900);
+        font-size: 18px;
+        line-height: 1;
+        font-weight: 900;
+      }
+
+      .brand-subtitle {
+        margin: 5px 0 0;
+        color: var(--slate-500);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .nav {
+        display: grid;
+        gap: 8px;
+        flex: 1;
+        align-content: start;
+        overflow: auto;
+        padding: 0 16px;
+      }
+
+      .nav button {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        min-height: 48px;
+        border: 0;
+        border-radius: 16px;
+        padding: 0 16px;
+        color: var(--slate-600);
+        background: transparent;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 800;
+        transition: background 0.18s ease, color 0.18s ease;
+      }
+
+      .nav button:hover {
+        background: var(--slate-100);
+      }
+
+      .nav button.active {
+        color: var(--white);
+        background: var(--sky-600);
+        box-shadow: var(--shadow);
+      }
+
+      .main {
+        min-width: 0;
+        flex: 1;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        height: 80px;
+        border-bottom: 1px solid var(--slate-200);
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(18px);
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        height: 100%;
+        padding: 0 32px;
+      }
+
+      .page-kicker {
+        margin: 0;
+        color: var(--slate-500);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .page-title {
+        margin: 4px 0 0;
+        color: var(--slate-900);
+        font-size: 26px;
+        line-height: 1.1;
+        font-weight: 950;
+        letter-spacing: -0.02em;
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 42px;
+        border: 0;
+        border-radius: 16px;
+        padding: 0 16px;
+        font-size: 14px;
+        font-weight: 850;
+        white-space: nowrap;
+      }
+
+      .btn.primary {
+        color: var(--white);
+        background: var(--sky-600);
+      }
+
+      .btn.success {
+        color: var(--white);
+        background: var(--emerald-600);
+      }
+
+      .btn.ghost {
+        color: var(--slate-700);
+        background: var(--white);
+        border: 1px solid var(--slate-200);
+        box-shadow: var(--shadow);
+      }
+
+      .btn.soft {
+        color: var(--slate-700);
+        background: var(--slate-100);
+      }
+
+      .btn.icon {
+        width: 42px;
+        padding: 0;
+      }
+
+      .avatar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-radius: 16px;
+        background: var(--slate-100);
+        padding: 8px 12px;
+      }
+
+      .avatar-mark {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        color: var(--white);
+        background: var(--sky-600);
+        font-size: 14px;
+        font-weight: 950;
+      }
+
+      .avatar strong,
+      .avatar span {
+        display: block;
+      }
+
+      .avatar strong {
+        font-size: 14px;
+      }
+
+      .avatar span {
+        color: var(--slate-500);
+        font-size: 12px;
+      }
+
+      .content {
+        padding: 32px;
+      }
+
+      .phase-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .phase-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border: 1px solid var(--sky-100);
+        border-radius: 999px;
+        background: var(--white);
+        padding: 5px 10px;
+        color: var(--sky-700);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .grid.metrics {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .grid.two {
+        grid-template-columns: minmax(0, 2fr) minmax(340px, 1fr);
+      }
+
+      .grid.cards2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid.cards3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .metric,
+      .panel,
+      .entity-card {
+        border: 1px solid var(--slate-200);
+        border-radius: 20px;
+        background: var(--white);
+        box-shadow: var(--shadow);
+      }
+
+      .metric {
+        min-height: 156px;
+        padding: 20px;
+      }
+
+      .metric-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .metric label {
+        display: block;
+        color: var(--slate-500);
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .metric strong {
+        display: block;
+        margin-top: 10px;
+        color: var(--slate-900);
+        font-size: 34px;
+        line-height: 1;
+        font-weight: 950;
+        letter-spacing: -0.03em;
+      }
+
+      .metric p {
+        margin: 18px 0 0;
+        color: var(--slate-500);
+        font-size: 14px;
+      }
+
+      .metric-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        color: var(--sky-700);
+        background: var(--sky-50);
+      }
+
+      .panel {
+        padding: 20px;
+      }
+
+      .panel-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .panel h2,
+      .panel h3,
+      .entity-card h3 {
+        margin: 0;
+        color: var(--slate-900);
+        font-weight: 950;
+      }
+
+      .panel h2 {
+        font-size: 20px;
+      }
+
+      .panel h3,
+      .entity-card h3 {
+        font-size: 18px;
+      }
+
+      .panel p,
+      .entity-card p {
+        margin: 6px 0 0;
+        color: var(--slate-500);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .search-wrap {
+        position: relative;
+        width: min(100%, 430px);
+      }
+
+      .search-wrap svg {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--slate-500);
+      }
+
+      .search-wrap input,
+      .select {
+        width: 100%;
+        min-height: 44px;
+        border: 1px solid var(--slate-200);
+        border-radius: 16px;
+        color: var(--slate-800);
+        background: var(--white);
+        outline: 0;
+      }
+
+      .search-wrap input {
+        padding: 0 14px 0 40px;
+      }
+
+      .select {
+        padding: 0 12px;
+      }
+
+      .data-table {
+        overflow: hidden;
+        border: 1px solid var(--slate-200);
+        border-radius: 18px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      thead {
+        background: var(--slate-50);
+        color: var(--slate-500);
+        font-size: 12px;
+        font-weight: 950;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      th,
+      td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--slate-200);
+        vertical-align: middle;
+      }
+
+      tbody tr:hover {
+        background: var(--slate-50);
+      }
+
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .progress-line {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .progress {
+        width: 96px;
+        height: 8px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: var(--slate-200);
+      }
+
+      .progress b {
+        display: block;
+        width: var(--w);
+        height: 100%;
+        border-radius: inherit;
+        background: var(--sky-600);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 900;
+        border: 1px solid transparent;
+        white-space: nowrap;
+      }
+
+      .badge.Active {
+        color: var(--emerald-700);
+        background: var(--emerald-50);
+        border-color: #bbf7d0;
+      }
+
+      .badge.Approved {
+        color: var(--emerald-700);
+        background: var(--emerald-50);
+        border-color: #bbf7d0;
+      }
+
+      .badge.Rejected {
+        color: var(--rose-700);
+        background: var(--rose-50);
+        border-color: #fecdd3;
+      }
+
+      .badge.Invited {
+        color: var(--sky-700);
+        background: var(--sky-50);
+        border-color: #bae6fd;
+      }
+
+      .badge.Pending {
+        color: var(--amber-700);
+        background: var(--amber-50);
+        border-color: #fde68a;
+      }
+
+      .badge.Inactive {
+        color: var(--rose-700);
+        background: var(--rose-50);
+        border-color: #fecdd3;
+      }
+
+      .badge.NeedsCheck,
+      .badge.Needs {
+        color: var(--orange-700);
+        background: var(--orange-50);
+        border-color: #fed7aa;
+      }
+
+      .task-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .task {
+        display: flex;
+        width: 100%;
+        gap: 12px;
+        border: 1px solid var(--slate-200);
+        border-radius: 18px;
+        background: var(--white);
+        padding: 16px;
+        text-align: left;
+        cursor: pointer;
+        transition: border-color 0.18s ease, transform 0.18s ease;
+      }
+
+      .task:hover {
+        border-color: var(--sky-600);
+        transform: translateY(-1px);
+      }
+
+      .task .task-icon {
+        margin-top: 2px;
+      }
+
+      .task strong {
+        display: block;
+        color: var(--slate-900);
+      }
+
+      .task span {
+        display: block;
+        margin-top: 4px;
+        color: var(--slate-500);
+        font-size: 14px;
+      }
+
+      .entity-card {
+        padding: 20px;
+      }
+
+      .entity-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .entity-stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .entity-stats.data-stats {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .stat {
+        min-width: 0;
+        border-radius: 16px;
+        background: var(--slate-50);
+        padding: 12px;
+      }
+
+      .entity-stats.data-stats .stat {
+        display: flex;
+        min-height: 76px;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .stat span {
+        display: block;
+        color: var(--slate-500);
+        font-size: 12px;
+      }
+
+      .stat strong {
+        display: block;
+        margin-top: 4px;
+        color: var(--slate-900);
+        font-size: 14px;
+        word-break: keep-all;
+      }
+
+      .quality-data {
+        margin-top: 16px;
+        border: 1px solid var(--slate-200);
+        border-radius: 18px;
+        background: var(--white);
+        padding: 14px;
+      }
+
+      .quality-data-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .quality-data-head h4 {
+        margin: 0;
+        color: var(--slate-900);
+        font-size: 14px;
+        font-weight: 950;
+      }
+
+      .quality-data-head p {
+        margin: 4px 0 0;
+        color: var(--slate-500);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .quality-measure-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .quality-measure {
+        min-width: 0;
+        border-radius: 14px;
+        background: var(--slate-50);
+        padding: 10px;
+      }
+
+      .quality-measure span {
+        display: block;
+        color: var(--slate-500);
+        font-size: 11px;
+        line-height: 1.35;
+        font-weight: 850;
+      }
+
+      .quality-measure strong {
+        display: block;
+        margin-top: 5px;
+        color: var(--slate-900);
+        font-size: 14px;
+        font-weight: 950;
+        word-break: break-word;
+      }
+
+      .quality-report-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .role-box {
+        border-radius: 18px;
+        background: var(--slate-50);
+        padding: 16px;
+      }
+
+      .role-box strong {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--slate-900);
+      }
+
+      .role-box small {
+        display: block;
+        margin-top: 10px;
+        color: var(--slate-500);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .role-box p {
+        margin: 6px 0 0;
+        color: var(--slate-600);
+        font-size: 14px;
+      }
+
+      .approval-card {
+        border: 1px solid var(--slate-200);
+        border-radius: 20px;
+        padding: 20px;
+      }
+
+      .approval-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .structure-card {
+        border-radius: 18px;
+        background: var(--slate-50);
+        padding: 20px;
+      }
+
+      .setting-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+        border: 1px solid var(--slate-200);
+        border-radius: 18px;
+        padding: 20px;
+      }
+
+      .ops-strip {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .mini-card,
+      .record-card,
+      .media-card {
+        border: 1px solid var(--slate-200);
+        border-radius: 18px;
+        background: var(--white);
+        padding: 16px;
+      }
+
+      .mini-card span,
+      .record-card span,
+      .media-card span {
+        display: block;
+        color: var(--slate-500);
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .mini-card strong {
+        display: block;
+        margin-top: 6px;
+        color: var(--slate-900);
+        font-size: 20px;
+        font-weight: 950;
+      }
+
+      .mini-card p,
+      .record-card p,
+      .media-card p {
+        margin: 6px 0 0;
+        color: var(--slate-500);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .stack {
+        display: grid;
+        gap: 14px;
+      }
+
+      .record-card {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .record-card h3,
+      .media-card h3 {
+        margin: 0;
+        color: var(--slate-900);
+        font-size: 17px;
+        font-weight: 950;
+      }
+
+      .media-preview {
+        height: 138px;
+        border-radius: 16px;
+        background:
+          linear-gradient(135deg, rgba(2, 132, 199, 0.18), rgba(5, 150, 105, 0.16)),
+          var(--slate-50);
+        margin-bottom: 14px;
+      }
+
+      .qa-grid {
+        display: grid;
+        grid-template-columns: 1.15fr 0.85fr;
+        gap: 16px;
+      }
+
+      .detail-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        border-radius: 14px;
+        background: var(--slate-50);
+        padding: 11px 12px;
+        color: var(--slate-600);
+        font-size: 13px;
+      }
+
+      .detail-row strong {
+        color: var(--slate-900);
+      }
+
+      .activity-review-body {
+        display: grid;
+        gap: 16px;
+      }
+
+      .activity-review-summary {
+        border: 1px solid var(--slate-200);
+        border-radius: 18px;
+        background: var(--slate-50);
+        padding: 16px;
+      }
+
+      .activity-review-summary h3 {
+        margin: 0;
+        color: var(--slate-900);
+        font-size: 18px;
+        font-weight: 950;
+      }
+
+      .activity-review-summary p {
+        margin: 8px 0 0;
+        color: var(--slate-600);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .activity-post-body {
+        margin: 0;
+        border: 1px solid var(--slate-200);
+        border-radius: 18px;
+        background: var(--white);
+        padding: 16px;
+        color: var(--slate-700);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .activity-image-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .activity-image {
+        display: flex;
+        align-items: end;
+        min-height: 74px;
+        overflow: hidden;
+        border: 1px solid var(--slate-200);
+        border-radius: 12px;
+        background:
+          linear-gradient(135deg, rgba(2, 132, 199, 0.24), rgba(5, 150, 105, 0.2)),
+          var(--slate-100);
+      }
+
+      .activity-image img,
+      .activity-image video {
+        width: 100%;
+        height: 74px;
+        object-fit: cover;
+      }
+
+      .activity-image span {
+        width: 100%;
+        padding: 8px;
+        color: var(--slate-800);
+        background: rgba(255, 255, 255, 0.78);
+        font-size: 11px;
+        font-weight: 850;
+      }
+
+      .activity-edit-form {
+        display: grid;
+        gap: 14px;
+      }
+
+      .record-graph-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .record-graph-card {
+        border: 1px solid var(--slate-200);
+        border-radius: 18px;
+        background: var(--white);
+        padding: 16px;
+      }
+
+      .record-graph-card h3 {
+        margin: 0;
+        color: var(--slate-900);
+        font-size: 15px;
+        font-weight: 950;
+      }
+
+      .record-graph-card p {
+        margin: 4px 0 12px;
+        color: var(--slate-500);
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .record-graph-card svg {
+        width: 100%;
+        height: auto;
+        overflow: visible;
+      }
+
+      .dashboard-charts {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .mini-chart-card {
+        border: 1px solid var(--slate-200);
+        border-radius: 20px;
+        background: var(--white);
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+
+      .mini-chart-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .mini-chart-card label {
+        display: block;
+        color: var(--slate-500);
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .mini-chart-card strong {
+        display: block;
+        margin-top: 6px;
+        color: var(--slate-900);
+        font-size: 24px;
+        line-height: 1;
+        font-weight: 950;
+      }
+
+      .mini-chart-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: var(--chart-color);
+      }
+
+      .mini-chart-card svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        margin-top: 12px;
+      }
+
+      .mini-chart-card p {
+        margin: 8px 0 0;
+        color: var(--slate-500);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .ranking-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .ranking-row {
+        display: grid;
+        grid-template-columns: 44px minmax(0, 1fr) 92px;
+        align-items: center;
+        gap: 14px;
+        border: 1px solid var(--slate-200);
+        border-radius: 16px;
+        background: var(--white);
+        padding: 12px;
+      }
+
+      .ranking-row.top-rank {
+        background: linear-gradient(90deg, rgba(240, 249, 255, 0.95), rgba(255, 255, 255, 0.95));
+        border-color: var(--sky-100);
+      }
+
+      .rank-mark {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        color: var(--slate-700);
+        background: var(--slate-100);
+        font-size: 13px;
+        font-weight: 950;
+      }
+
+      .rank-mark.gold {
+        color: #92400e;
+        background: #fef3c7;
+      }
+
+      .rank-mark.silver {
+        color: var(--slate-700);
+        background: #e5e7eb;
+      }
+
+      .rank-mark.bronze {
+        color: #9a3412;
+        background: #ffedd5;
+      }
+
+      .ranking-main h3 {
+        margin: 0;
+        color: var(--slate-900);
+        font-size: 15px;
+        font-weight: 950;
+      }
+
+      .ranking-main p {
+        margin: 4px 0 0;
+        color: var(--slate-500);
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .score-box {
+        text-align: right;
+      }
+
+      .score-box strong {
+        display: block;
+        color: var(--sky-700);
+        font-size: 18px;
+        line-height: 1;
+        font-weight: 950;
+      }
+
+      .score-box span {
+        display: block;
+        margin-top: 5px;
+        color: var(--slate-500);
+        font-size: 11px;
+        font-weight: 800;
+      }
+
+      .participation-meter {
+        height: 6px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: var(--slate-100);
+        margin-top: 9px;
+      }
+
+      .participation-meter b {
+        display: block;
+        width: var(--w);
+        height: 100%;
+        border-radius: inherit;
+        background: var(--emerald-600);
+      }
+
+      .tab-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        border-bottom: 1px solid var(--slate-200);
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+      }
+
+      .tab-row button {
+        border: 0;
+        border-bottom: 2px solid transparent;
+        background: transparent;
+        padding: 8px 14px;
+        color: var(--slate-500);
+        font-size: 14px;
+        font-weight: 850;
+      }
+
+      .tab-row button.active {
+        border-color: var(--sky-600);
+        color: var(--sky-700);
+      }
+
+      .filter-panel {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        border: 1px solid var(--slate-200);
+        border-radius: 18px;
+        background: var(--slate-50);
+        padding: 16px;
+        margin-bottom: 18px;
+      }
+
+      .filter-field {
+        display: grid;
+        gap: 6px;
+      }
+
+      .filter-field label {
+        color: var(--slate-600);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .filter-field select {
+        min-height: 40px;
+        border: 1px solid var(--slate-200);
+        border-radius: 12px;
+        background: var(--white);
+        color: var(--slate-800);
+        padding: 0 10px;
+        outline: 0;
+      }
+
+      .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 70;
+        display: none;
+        background: rgba(15, 23, 42, 0.34);
+      }
+
+      .drawer-backdrop.show {
+        display: block;
+      }
+
+      .drawer {
+        position: fixed;
+        inset: 0 0 0 auto;
+        z-index: 80;
+        width: min(480px, 100%);
+        display: flex;
+        flex-direction: column;
+        background: var(--white);
+        box-shadow: -18px 0 48px rgba(15, 23, 42, 0.22);
+        transform: translateX(100%);
+        transition: transform 0.22s ease;
+      }
+
+      .drawer.show {
+        transform: translateX(0);
+      }
+
+      .drawer-head,
+      .drawer-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        border-bottom: 1px solid var(--slate-200);
+        padding: 22px;
+      }
+
+      .drawer-actions {
+        border-top: 1px solid var(--slate-200);
+        border-bottom: 0;
+      }
+
+      .drawer-head h2 {
+        margin: 4px 0 0;
+        color: var(--slate-900);
+        font-size: 22px;
+      }
+
+      .drawer-head span {
+        color: var(--slate-500);
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .drawer-body {
+        flex: 1;
+        overflow: auto;
+        display: grid;
+        gap: 18px;
+        padding: 22px;
+      }
+
+      .drawer-section h3 {
+        margin: 0 0 10px;
+        color: var(--slate-800);
+        font-size: 15px;
+        font-weight: 950;
+      }
+
+      .toggle {
+        width: 48px;
+        height: 28px;
+        border-radius: 999px;
+        background: var(--sky-600);
+        padding: 4px;
+        flex: 0 0 auto;
+      }
+
+      .toggle b {
+        display: block;
+        width: 20px;
+        height: 20px;
+        margin-left: auto;
+        border-radius: 999px;
+        background: var(--white);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .toast {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 40;
+        display: none;
+        max-width: 360px;
+        border-radius: 16px;
+        color: var(--white);
+        background: var(--slate-900);
+        padding: 14px 16px;
+        box-shadow: 0 16px 42px rgba(15, 23, 42, 0.24);
+        font-size: 14px;
+        font-weight: 850;
+      }
+
+      .toast.show {
+        display: block;
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: rgba(15, 23, 42, 0.38);
+      }
+
+      .modal-backdrop.show {
+        display: flex;
+      }
+
+      .modal {
+        width: min(920px, 100%);
+        max-height: calc(100vh - 40px);
+        overflow: auto;
+        border-radius: 22px;
+        background: var(--white);
+        box-shadow: 0 24px 80px rgba(15, 23, 42, 0.28);
+      }
+
+      .modal-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 22px;
+        border-bottom: 1px solid var(--slate-200);
+      }
+
+      .modal-head h2,
+      .modal-head p {
+        margin: 0;
+      }
+
+      .modal-head h2 {
+        color: var(--slate-900);
+        font-size: 22px;
+        font-weight: 950;
+      }
+
+      .modal-head p {
+        margin-top: 6px;
+        color: var(--slate-500);
+        line-height: 1.5;
+      }
+
+      .modal-close {
+        width: 38px;
+        height: 38px;
+        border: 0;
+        border-radius: 14px;
+        color: var(--slate-700);
+        background: var(--slate-100);
+        font-size: 20px;
+      }
+
+      .school-form {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        padding: 22px;
+      }
+
+      .form-field {
+        display: grid;
+        gap: 7px;
+      }
+
+      .form-field label {
+        color: var(--slate-800);
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .form-field input,
+      .form-field select,
+      .form-field textarea {
+        width: 100%;
+        border: 1px solid var(--slate-200);
+        border-radius: 15px;
+        color: var(--slate-900);
+        background: var(--white);
+        outline: 0;
+      }
+
+      .form-field input,
+      .form-field select {
+        min-height: 44px;
+        padding: 0 13px;
+      }
+
+      .form-field textarea {
+        min-height: 92px;
+        resize: vertical;
+        padding: 12px 13px;
+        line-height: 1.5;
+      }
+
+      .form-field.full,
+      .form-section {
+        grid-column: 1 / -1;
+      }
+
+      .form-section {
+        border-top: 1px solid var(--slate-200);
+        padding-top: 18px;
+        margin-top: 4px;
+      }
+
+      .form-section h3 {
+        margin: 0;
+        color: var(--slate-900);
+        font-size: 16px;
+        font-weight: 950;
+      }
+
+      .form-section p {
+        margin: 5px 0 0;
+        color: var(--slate-500);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .form-field small {
+        min-height: 16px;
+        color: var(--rose-700);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 0 22px 22px;
+      }
+
+      .invite-summary {
+        grid-column: 1 / -1;
+        border-radius: 16px;
+        background: var(--sky-50);
+        color: var(--sky-700);
+        padding: 13px;
+        font-size: 13px;
+        font-weight: 800;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 1180px) {
+        .sidebar {
+          width: 88px;
+          flex-basis: 88px;
+        }
+
+        .brand {
+          justify-content: center;
+          padding: 0;
+        }
+
+        .brand-title,
+        .brand-subtitle,
+        .nav-label {
+          display: none;
+        }
+
+        .nav {
+          padding: 0 12px;
+        }
+
+        .nav button {
+          justify-content: center;
+          padding: 0;
+        }
+
+        .grid.metrics,
+        .grid.cards3,
+        .ops-strip,
+        .qa-grid,
+        .activity-image-grid,
+        .record-graph-grid,
+        .entity-stats.data-stats,
+        .dashboard-charts,
+        .filter-panel {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid.two {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .layout {
+          display: block;
+        }
+
+        .sidebar {
+          position: static;
+          width: 100%;
+          height: auto;
+        }
+
+        .brand {
+          justify-content: flex-start;
+          padding: 0 16px;
+        }
+
+        .brand-title,
+        .brand-subtitle,
+        .nav-label {
+          display: block;
+        }
+
+        .nav {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          padding-bottom: 16px;
+        }
+
+        .nav button {
+          justify-content: flex-start;
+          padding: 0 14px;
+        }
+
+        .topbar {
+          position: static;
+          height: auto;
+        }
+
+        .topbar-inner,
+        .phase-inner,
+        .toolbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .content {
+          padding: 16px;
+        }
+
+        .grid.metrics,
+        .grid.cards2,
+        .grid.cards3,
+        .entity-stats,
+        .entity-stats.data-stats,
+        .ops-strip,
+        .qa-grid,
+        .activity-image-grid,
+        .record-graph-grid,
+        .dashboard-charts,
+        .filter-panel {
+          grid-template-columns: 1fr;
+        }
+
+        .record-card {
+          display: block;
+        }
+
+        .data-table {
+          overflow-x: auto;
+        }
+
+        .ranking-row {
+          grid-template-columns: 36px minmax(0, 1fr);
+        }
+
+        .ranking-row .score-box {
+          grid-column: 2;
+          text-align: left;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-lockup">
+            <div class="brand-icon" aria-hidden="true"><img src="assets/skybot-logo.png" alt="" /></div>
+            <div>
+              <p class="brand-title">SKYBOT</p>
+              <p class="brand-subtitle">Admin Panel</p>
+            </div>
+          </div>
+        </div>
+        <nav class="nav" id="nav"></nav>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar-inner">
+            <div>
+              <p class="page-kicker">Rain School Operation System</p>
+              <h1 class="page-title" id="pageTitle">Dashboard</h1>
+            </div>
+            <div class="top-actions">
+              <button class="btn ghost">⬇ Export</button>
+              <button class="btn ghost icon">🔔</button>
+              <div class="avatar">
+                <div class="avatar-mark">H</div>
+                <div>
+                  <strong>Hyunwoo</strong>
+                  <span>Super Admin</span>
+                </div>
+                <span>⌄</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div class="content">
+          <section id="page"></section>
+        </div>
+      </main>
+    </div>
+
+    <div class="toast" id="toast">Action completed.</div>
+
+    <div class="drawer-backdrop" id="schoolDrawerBackdrop"></div>
+    <aside class="drawer" id="schoolDrawer" aria-label="School detail drawer">
+      <div id="schoolDrawerContent"></div>
+    </aside>
+
+    <div class="modal-backdrop" id="dataGraphModal" role="dialog" aria-modal="true" aria-labelledby="dataGraphTitle">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <h2 id="dataGraphTitle">Data Records</h2>
+            <p id="dataGraphSubtitle">School water data trend.</p>
+          </div>
+          <button class="modal-close" id="closeDataGraphModal" type="button" aria-label="Close">x</button>
+        </div>
+        <div id="dataGraphContent"></div>
+        <div class="modal-actions">
+          <button class="btn primary" id="doneDataGraph" type="button">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="pointsModal" role="dialog" aria-modal="true" aria-labelledby="pointsModalTitle">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <h2 id="pointsModalTitle">Edit School Points</h2>
+            <p>Update the app ranking score and participation rate for this Rain School.</p>
+          </div>
+          <button class="modal-close" id="closePointsModal" type="button" aria-label="Close">x</button>
+        </div>
+        <form class="school-form" id="pointsForm">
+          <div class="form-field full">
+            <label for="pointsSchoolName">School</label>
+            <input id="pointsSchoolName" name="schoolName" readonly />
+          </div>
+          <div class="form-field">
+            <label for="schoolPoints">Points *</label>
+            <input id="schoolPoints" name="points" type="number" min="0" max="100" />
+            <small data-points-error-for="points"></small>
+          </div>
+          <div class="form-field">
+            <label for="schoolParticipation">Participation (%) *</label>
+            <input id="schoolParticipation" name="participation" type="number" min="0" max="100" />
+            <small data-points-error-for="participation"></small>
+          </div>
+        </form>
+        <div class="modal-actions">
+          <button class="btn ghost" id="cancelPoints" type="button">Cancel</button>
+          <button class="btn primary" id="submitPoints" type="submit" form="pointsForm">Save Points</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="schoolModal" role="dialog" aria-modal="true" aria-labelledby="schoolModalTitle">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <h2 id="schoolModalTitle">Add Rain School</h2>
+            <p>Register a school with the minimum fields needed for Phase 1 field operation.</p>
+          </div>
+          <button class="modal-close" id="closeSchoolModal" type="button" aria-label="Close">x</button>
+        </div>
+        <form class="school-form" id="schoolForm">
+          <div class="form-section">
+            <h3>School Info Page</h3>
+            <p>These fields feed the school detail page: main photo, school stats, history, introduction, and gallery.</p>
+          </div>
+          <div class="form-field">
+            <label for="schoolName">School name *</label>
+            <input id="schoolName" name="name" placeholder="e.g. Siem Reap Rain School" />
+            <small data-error-for="name"></small>
+          </div>
+          <div class="form-field">
+            <label for="schoolCountry">Country *</label>
+            <select id="schoolCountry" name="country">
+              <option value="">Select country</option>
+              <option>Cambodia</option>
+              <option>Myanmar</option>
+              <option>Vietnam</option>
+              <option>Thailand</option>
+            </select>
+            <small data-error-for="country"></small>
+          </div>
+          <div class="form-field">
+            <label for="schoolStudentCount">Student count</label>
+            <input id="schoolStudentCount" name="studentCount" type="number" min="0" placeholder="e.g. 420" />
+            <small data-error-for="studentCount"></small>
+          </div>
+          <div class="form-field">
+            <label for="schoolTeacherCount">Teacher count</label>
+            <input id="schoolTeacherCount" name="teacherCount" type="number" min="0" placeholder="e.g. 32" />
+            <small data-error-for="teacherCount"></small>
+          </div>
+          <div class="form-field full">
+            <label for="schoolMainPhoto">School main photo</label>
+            <input id="schoolMainPhoto" name="schoolMainPhoto" type="file" accept="image/*" />
+            <small data-error-for="schoolMainPhoto">Upload the representative school image.</small>
+          </div>
+          <div class="form-field full">
+            <label for="schoolHistory">School history</label>
+            <textarea id="schoolHistory" name="schoolHistory" placeholder="Write the school's history shown on the detail page."></textarea>
+            <small data-error-for="schoolHistory"></small>
+          </div>
+          <div class="form-field full">
+            <label for="schoolIntro">School introduction</label>
+            <textarea id="schoolIntro" name="schoolIntro" placeholder="Introduce the school, community, and education context."></textarea>
+            <small data-error-for="schoolIntro"></small>
+          </div>
+          <div class="form-field full">
+            <label for="schoolGallery">School gallery images</label>
+            <input id="schoolGallery" name="schoolGallery" type="file" accept="image/*" multiple />
+            <small data-error-for="schoolGallery">Upload one or more school photos.</small>
+          </div>
+          <div class="form-section">
+            <h3>Facility Info Page</h3>
+            <p>These fields feed the facility detail page: max capacity, catchment size, filter system, install date, overview, and photos.</p>
+          </div>
+          <div class="form-field">
+            <label for="schoolCapacity">Rainwater facility max capacity (L) *</label>
+            <input id="schoolCapacity" name="capacity" type="number" min="1" placeholder="e.g. 8000" />
+            <small data-error-for="capacity"></small>
+          </div>
+          <div class="form-field">
+            <label for="facilityCollectionArea">Catchment size</label>
+            <input id="facilityCollectionArea" name="collectionArea" placeholder="e.g. 420 m2" />
+            <small data-error-for="collectionArea"></small>
+          </div>
+          <div class="form-field">
+            <label for="facilityFiltration">Filter system</label>
+            <input id="facilityFiltration" name="filtration" placeholder="e.g. Sediment + carbon" />
+            <small data-error-for="filtration"></small>
+          </div>
+          <div class="form-field">
+            <label for="facilityInstallDate">Installation date</label>
+            <input id="facilityInstallDate" name="installDate" type="date" />
+            <small data-error-for="installDate"></small>
+          </div>
+          <div class="form-field full">
+            <label for="facilityOverview">System overview</label>
+            <textarea id="facilityOverview" name="facilityOverview" placeholder="Explain how the rainwater drinking system works at this school."></textarea>
+            <small data-error-for="facilityOverview"></small>
+          </div>
+          <div class="form-field full">
+            <label for="facilityMainPhoto">Facility main photo</label>
+            <input id="facilityMainPhoto" name="facilityMainPhoto" type="file" accept="image/*" />
+            <small data-error-for="facilityMainPhoto">Upload the representative facility image.</small>
+          </div>
+          <div class="form-field full">
+            <label for="facilityGallery">Facility gallery images</label>
+            <input id="facilityGallery" name="facilityGallery" type="file" accept="image/*" multiple />
+            <small data-error-for="facilityGallery">Upload one or more facility photos.</small>
+          </div>
+        </form>
+        <div class="modal-actions">
+          <button class="btn ghost" id="cancelSchool" type="button">Cancel</button>
+          <button class="btn primary" id="submitSchool" type="submit" form="schoolForm">Add School</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="inviteModal" role="dialog" aria-modal="true" aria-labelledby="inviteModalTitle">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <h2 id="inviteModalTitle">Quick Invite</h2>
+            <p>Create a scoped user invitation for Rain School operations.</p>
+          </div>
+          <button class="modal-close" id="closeInviteModal" type="button" aria-label="Close">x</button>
+        </div>
+        <form class="school-form" id="inviteForm">
+          <div class="form-field">
+            <label for="inviteName">Full name *</label>
+            <input id="inviteName" name="name" placeholder="e.g. Dr. Khue" />
+            <small data-invite-error-for="name"></small>
+          </div>
+          <div class="form-field">
+            <label for="inviteEmail">Email *</label>
+            <input id="inviteEmail" name="email" type="email" placeholder="name@school.org" />
+            <small data-invite-error-for="email"></small>
+          </div>
+          <div class="form-field">
+            <label for="inviteRole">Role *</label>
+            <select id="inviteRole" name="role">
+              <option>Regional Manager</option>
+              <option>Teacher</option>
+              <option>BiTS Student</option>
+              <option>Viewer</option>
+              <option>Super Admin</option>
+            </select>
+            <small data-invite-error-for="role"></small>
+          </div>
+          <div class="form-field">
+            <label for="inviteCountry">Country *</label>
+            <select id="inviteCountry" name="country">
+              <option>All</option>
+              <option>Cambodia</option>
+              <option>Myanmar</option>
+              <option>Vietnam</option>
+              <option>Thailand</option>
+            </select>
+            <small data-invite-error-for="country"></small>
+          </div>
+          <div class="form-field">
+            <label for="inviteSchool">School scope *</label>
+            <select id="inviteSchool" name="school"></select>
+            <small data-invite-error-for="school"></small>
+          </div>
+          <div class="form-field">
+            <label for="inviteStatus">Initial status</label>
+            <select id="inviteStatus" name="status">
+              <option>Invited</option>
+              <option>Pending</option>
+              <option>Active</option>
+            </select>
+            <small data-invite-error-for="status"></small>
+          </div>
+          <div class="invite-summary" id="inviteSummary">Regional Manager invitations are created as Invited. BiTS Student requests should usually start as Pending for approval.</div>
+        </form>
+        <div class="modal-actions">
+          <button class="btn ghost" id="cancelInvite" type="button">Cancel</button>
+          <button class="btn primary" id="submitInvite" type="submit" form="inviteForm">Send Invite</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="knowledgeModal" role="dialog" aria-modal="true" aria-labelledby="knowledgeModalTitle">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <h2 id="knowledgeModalTitle">New Knowledge Hub Post</h2>
+            <p>Create news, research, tips, or education content for the app Info section.</p>
+          </div>
+          <button class="modal-close" id="closeKnowledgeModal" type="button" aria-label="Close">x</button>
+        </div>
+        <form class="school-form" id="knowledgeForm">
+          <div class="form-field">
+            <label for="knowledgeTitle">Title *</label>
+            <input id="knowledgeTitle" name="title" placeholder="e.g. Weekly rainwater maintenance tips" />
+            <small data-knowledge-error-for="title"></small>
+          </div>
+          <div class="form-field">
+            <label for="knowledgeCategory">Category</label>
+            <select id="knowledgeCategory" name="category">
+              <option>News</option>
+              <option>Knowledge</option>
+              <option>Research</option>
+              <option>Tips</option>
+              <option>Education</option>
+            </select>
+            <small data-knowledge-error-for="category"></small>
+          </div>
+          <div class="form-field">
+            <label for="knowledgeOwner">Owner</label>
+            <input id="knowledgeOwner" name="owner" value="Rain for All" />
+            <small data-knowledge-error-for="owner"></small>
+          </div>
+          <div class="form-field">
+            <label for="knowledgeStatus">Status</label>
+            <select id="knowledgeStatus" name="status">
+              <option>Published</option>
+              <option>Draft</option>
+              <option>Review</option>
+            </select>
+            <small data-knowledge-error-for="status"></small>
+          </div>
+          <div class="form-field full">
+            <label for="knowledgeBody">Body</label>
+            <textarea id="knowledgeBody" name="body" placeholder="Write the content summary shown in the app."></textarea>
+            <small data-knowledge-error-for="body"></small>
+          </div>
+          <div class="form-field full">
+            <label for="knowledgeImages">Images</label>
+            <input id="knowledgeImages" name="images" type="file" accept="image/*" multiple />
+            <small data-knowledge-error-for="images">Upload one or more images for the post.</small>
+          </div>
+        </form>
+        <div class="modal-actions">
+          <button class="btn ghost" id="cancelKnowledge" type="button">Cancel</button>
+          <button class="btn primary" id="submitKnowledge" type="submit" form="knowledgeForm">Publish Post</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="activityReviewModal" role="dialog" aria-modal="true" aria-labelledby="activityReviewTitle">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <h2 id="activityReviewTitle">Activity Review</h2>
+          </div>
+          <button class="modal-close" id="closeActivityReviewModal" type="button" aria-label="Close">x</button>
+        </div>
+        <div class="activity-review-body" id="activityReviewContent"></div>
+        <div class="modal-actions">
+          <button class="btn ghost" id="deleteReviewedActivity" type="button">Delete Post</button>
+          <button class="btn soft" id="editActivityPost" type="button">Edit</button>
+          <button class="btn primary" id="confirmActivityReview" type="button">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notificationModalTitle">
+      <div class="modal">
+        <div class="modal-head">
+          <div>
+            <h2 id="notificationModalTitle">New Notification Rule</h2>
+            <p>Create an operational alert rule for missing records, low tank levels, water quality review, or approval reminders.</p>
+          </div>
+          <button class="modal-close" id="closeNotificationModal" type="button" aria-label="Close">x</button>
+        </div>
+        <form class="school-form" id="notificationForm">
+          <div class="form-field">
+            <label for="notificationName">Rule name *</label>
+            <input id="notificationName" name="name" placeholder="e.g. Teacher weekly reminder" />
+            <small data-notification-error-for="name"></small>
+          </div>
+          <div class="form-field">
+            <label for="notificationTrigger">Trigger *</label>
+            <input id="notificationTrigger" name="trigger" placeholder="e.g. No record for 7 days" />
+            <small data-notification-error-for="trigger"></small>
+          </div>
+          <div class="form-field">
+            <label for="notificationAudience">Audience</label>
+            <select id="notificationAudience" name="audience">
+              <option>Regional Manager</option>
+              <option>Teacher</option>
+              <option>Manager + Teacher</option>
+              <option>Super Admin</option>
+              <option>BiTS Student</option>
+            </select>
+            <small data-notification-error-for="audience"></small>
+          </div>
+          <div class="form-field">
+            <label for="notificationStatus">Status</label>
+            <select id="notificationStatus" name="status">
+              <option>Active</option>
+              <option>Draft</option>
+            </select>
+            <small data-notification-error-for="status"></small>
+          </div>
+        </form>
+        <div class="modal-actions">
+          <button class="btn ghost" id="cancelNotification" type="button">Cancel</button>
+          <button class="btn primary" id="submitNotification" type="submit" form="notificationForm">Create Rule</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let schools = [
+        { id: 1, name: "RAC Rain School", country: "Cambodia", manager: "RTRC Staff A", teacher: "Ms. Sopheak", students: 12, status: "Active", lastRecord: "Today", tank: 78, usage: 420, ph: 7.2, tds: 118, records7d: 6, score: 95, participation: 98 },
+        { id: 2, name: "Kombol Rain School", country: "Cambodia", manager: "RTRC Staff A", teacher: "Mr. Dara", students: 9, status: "Needs Check", lastRecord: "3 days ago", tank: 46, usage: 260, ph: 7.5, tds: 154, records7d: 3, score: 82, participation: 89 },
+        { id: 3, name: "NBK Vietnam School", country: "Vietnam", manager: "Dr. Khue", teacher: "NBK Coordinator", students: 8, status: "Active", lastRecord: "Yesterday", tank: 62, usage: 310, ph: 7.1, tds: 130, records7d: 5, score: 88, participation: 92 },
+        { id: 4, name: "Myanmar HDS School", country: "Myanmar", manager: "RFA Myanmar", teacher: "BiTS Teacher", students: 15, status: "Inactive", lastRecord: "10 days ago", tank: 25, usage: 80, ph: 6.9, tds: 170, records7d: 0, score: 65, participation: 78 }
+      ];
+
+      let users = [
+        { name: "Prof. Han", role: "Super Admin", country: "All", school: "All Schools", status: "Invited" },
+        { name: "Dr. Khue", role: "Regional Manager", country: "Vietnam", school: "NBK Vietnam School", status: "Active" },
+        { name: "RTRC Staff A", role: "Regional Manager", country: "Cambodia", school: "3 Schools", status: "Active" },
+        { name: "Ms. Sopheak", role: "Teacher", country: "Cambodia", school: "RAC Rain School", status: "Active" },
+        { name: "BiTS Student 01", role: "BiTS Student", country: "Cambodia", school: "RAC Rain School", status: "Pending" },
+        { name: "NBK Student 03", role: "BiTS Student", country: "Vietnam", school: "NBK Vietnam School", status: "Active" }
+      ];
+
+      const records = [
+        { school: "RAC Rain School", type: "Water Level", value: "78%", recorder: "BiTS Student 02", time: "Today 09:12" },
+        { school: "RAC Rain School", type: "Water Quality", value: "pH 7.2 / TDS 118", recorder: "Ms. Sopheak", time: "Today 09:18" },
+        { school: "NBK Vietnam School", type: "Usage", value: "310 L/day", recorder: "NBK Student 03", time: "Yesterday" },
+        { school: "Kombol Rain School", type: "Maintenance", value: "Filter needs check", recorder: "RTRC Staff A", time: "3 days ago" }
+      ];
+
+      const qualityParameters = [
+        { key: "coliforms", label: "Coliforms Bacteria", unit: "cfu/100ml", standard: "None found" },
+        { key: "eColi", label: "Escherichia coli", unit: "cfu/100ml", standard: "None found" },
+        { key: "ph", label: "pH", unit: "", standard: "6.5 - 8.5", min: 6.5, max: 8.5 },
+        { key: "turbidity", label: "Turbidity", unit: "NTU", standard: "<= 5", max: 5 },
+        { key: "calcium", label: "Calcium (Ca)", unit: "mg/L", standard: "<= 200", max: 200 },
+        { key: "magnesium", label: "Magnesium (Mg)", unit: "mg/L", standard: "<= 150", max: 150 },
+        { key: "chloride", label: "Chloride (Cl)", unit: "mg/L", standard: "<= 250", max: 250 },
+        { key: "ammonium", label: "Ammonium (NH4)", unit: "mg/L", standard: "<= 1.5", max: 1.5 },
+        { key: "sodium", label: "Sodium (Na)", unit: "mg/L", standard: "<= 250", max: 250 },
+        { key: "fluoride", label: "Fluoride (F)", unit: "mg/L", standard: "<= 1.5", max: 1.5 },
+        { key: "hardness", label: "Total Hardness", unit: "mg/L", standard: "<= 300", max: 300 },
+        { key: "nitrate", label: "Nitrate (NO3)", unit: "mg/L", standard: "<= 50", max: 50 },
+        { key: "conductivity", label: "Conductivity", unit: "uS/cm", standard: "<= 1600", max: 1600 }
+      ];
+
+      const appQualityReports = [
+        {
+          id: 1,
+          school: "RAC Rain School",
+          author: "BiTS Student 02",
+          date: "2026-06-01",
+          source: "SkyBot App",
+          reportImage: "Microbiological report image",
+          measurements: [
+            { key: "coliforms", value: "None found" },
+            { key: "eColi", value: "None found" }
+          ],
+          note: "Microbiological analysis result uploaded from the app."
+        },
+        {
+          id: 2,
+          school: "NBK Vietnam School",
+          author: "NBK Student 03",
+          date: "2026-05-31",
+          source: "SkyBot App",
+          reportImage: "Chemical report image",
+          measurements: [
+            { key: "ph", value: "7.22" },
+            { key: "turbidity", value: "0" },
+            { key: "calcium", value: "2.60" },
+            { key: "magnesium", value: "0.61" },
+            { key: "chloride", value: "1.78" },
+            { key: "ammonium", value: "0.00" },
+            { key: "sodium", value: "0.194" },
+            { key: "fluoride", value: "0.17" },
+            { key: "hardness", value: "8.98" },
+            { key: "nitrate", value: "2.15" },
+            { key: "conductivity", value: "15" }
+          ],
+          note: "Physical and chemical analysis result uploaded from the app."
+        },
+        {
+          id: 3,
+          school: "Kombol Rain School",
+          author: "BiTS Student 01",
+          date: "2026-05-29",
+          source: "SkyBot App",
+          reportImage: "Manual meter photo",
+          measurements: [
+            { key: "ph", value: "7.48" },
+            { key: "turbidity", value: "1.2" },
+            { key: "conductivity", value: "28" }
+          ],
+          note: "Partial manual measurement submitted after field training."
+        }
+      ];
+
+      const facilities = [
+        { school: "RAC Rain School", capacity: "8,000 L", collectionArea: "420 m2", filtration: "Sediment + carbon", installDate: "2025-08-12", overview: "Four connected rainwater tanks with basic filtration for school drinking water.", mainPhoto: "", gallery: "", tanks: 4, maintenance: "Due in 12 days", risk: "Normal" },
+        { school: "Kombol Rain School", capacity: "6,000 L", collectionArea: "310 m2", filtration: "Sediment filter", installDate: "2025-09-03", overview: "School rainwater system requiring filter inspection before re-activation.", mainPhoto: "", gallery: "", tanks: 3, maintenance: "Filter check overdue", risk: "Needs Check" },
+        { school: "NBK Vietnam School", capacity: "7,500 L", collectionArea: "390 m2", filtration: "Sediment + UV", installDate: "2025-07-21", overview: "Rainwater drinking facility connected to education and activity programs.", mainPhoto: "", gallery: "", tanks: 4, maintenance: "Due in 21 days", risk: "Normal" },
+        { school: "Myanmar HDS School", capacity: "5,000 L", collectionArea: "280 m2", filtration: "Manual", installDate: "2025-10-10", overview: "Manual rainwater storage and filtration system pending site review.", mainPhoto: "", gallery: "", tanks: 2, maintenance: "Site visit required", risk: "High" }
+      ];
+
+      function sampleActivityImage(label, from, to) {
+        const svg = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="640" height="420" viewBox="0 0 640 420">
+            <defs>
+              <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+                <stop offset="0%" stop-color="${from}" />
+                <stop offset="100%" stop-color="${to}" />
+              </linearGradient>
+            </defs>
+            <rect width="640" height="420" rx="28" fill="url(#g)" />
+            <circle cx="520" cy="86" r="68" fill="rgba(255,255,255,0.22)" />
+            <rect x="56" y="248" width="528" height="92" rx="20" fill="rgba(255,255,255,0.2)" />
+            <text x="64" y="306" fill="white" font-size="38" font-family="Arial, sans-serif" font-weight="700">${label}</text>
+          </svg>
+        `;
+        return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+      }
+
+      let activities = [
+        {
+          title: "Weekly tank inspection",
+          school: "RAC Rain School",
+          type: "Maintenance",
+          author: "BiTS Student 02",
+          status: "Published",
+          media: 4,
+          date: "Today",
+          body: "BiTS members checked the main storage tank, gutter inlet, and filter housing after morning class. The tank level looked stable and no visible leakage was found around the valve.",
+          images: [
+            sampleActivityImage("Photo 1", "#0284c7", "#059669"),
+            sampleActivityImage("Photo 2", "#0f766e", "#7c3aed"),
+            sampleActivityImage("Photo 3", "#0369a1", "#f59e0b")
+          ]
+        },
+        {
+          title: "Water quality testing workshop",
+          school: "NBK Vietnam School",
+          type: "Education",
+          author: "NBK Coordinator",
+          status: "Pending",
+          media: 6,
+          date: "Yesterday",
+          body: "Students practiced how to measure pH and TDS, then compared the readings with the safe operating range shown in the SkyBot guide.",
+          images: [
+            sampleActivityImage("Photo 1", "#7c3aed", "#0284c7"),
+            sampleActivityImage("Photo 2", "#059669", "#0f172a"),
+            sampleActivityImage("Photo 3", "#f59e0b", "#0284c7")
+          ]
+        },
+        {
+          title: "Community awareness campaign",
+          school: "Kombol Rain School",
+          type: "Community",
+          author: "RTRC Staff A",
+          status: "Review",
+          media: 9,
+          date: "3 days ago",
+          body: "The team introduced the rainwater drinking system to students and community members, focusing on safe storage, filter care, and weekly reporting habits.",
+          images: [
+            sampleActivityImage("Photo 1", "#059669", "#0284c7"),
+            sampleActivityImage("Photo 2", "#f59e0b", "#be123c"),
+            sampleActivityImage("Photo 3", "#334155", "#0284c7")
+          ]
+        }
+      ];
+
+      let knowledgePosts = [
+        { title: "How to read pH and TDS together", category: "Knowledge", owner: "Rain for All", status: "Draft", comments: 2, images: [] },
+        { title: "RWHM field activation update", category: "News", owner: "Prof. Han", status: "Published", comments: 5, images: ["Field briefing"] },
+        { title: "Maintenance checklist for school tanks", category: "Tips", owner: "RTRC Staff A", status: "Published", comments: 1, images: ["Tank checklist"] },
+        { title: "Rainwater usage research notes", category: "Research", owner: "Dr. Khue", status: "Review", comments: 3, images: [] }
+      ];
+
+      const supportTickets = [
+        { id: "T-1042", subject: "BiTS account approval question", requester: "BiTS Student 01", channel: "ChatBot", status: "Open", priority: "High" },
+        { id: "T-1041", subject: "Kombol filter maintenance is overdue", requester: "RTRC Staff A", channel: "ChatBot", status: "Open", priority: "High" },
+        { id: "T-1038", subject: "Need CSV export for monthly report", requester: "Prof. Han", channel: "Admin", status: "Pending", priority: "Medium" }
+      ];
+
+      let notificationRules = [
+        { name: "Low tank level", trigger: "Tank < 30%", audience: "Manager + Teacher", status: "Active" },
+        { name: "No record alert", trigger: "No record for 7 days", audience: "Regional Manager", status: "Active" },
+        { name: "Water quality review", trigger: "pH/TDS manual record out of range", audience: "Super Admin", status: "Draft" },
+        { name: "BiTS approval reminder", trigger: "Pending > 48h", audience: "Teacher", status: "Active" }
+      ];
+
+      const reports = [
+        { name: "Monthly RWHM operating report", scope: "All Schools", format: "PDF + CSV", owner: "Prof. Han", status: "Ready" },
+        { name: "BiTS participation export", scope: "Cambodia", format: "CSV", owner: "RTRC Staff A", status: "Ready" },
+        { name: "Maintenance issue report", scope: "Myanmar HDS School", format: "PDF", owner: "Rain for All", status: "Draft" }
+      ];
+
+      const auditLogs = [
+        { action: "Approved BiTS member", actor: "Hyunwoo", target: "NBK Student 03", time: "Today 10:20" },
+        { action: "Updated facility maintenance", actor: "RTRC Staff A", target: "Kombol Rain School", time: "Yesterday" },
+        { action: "Published knowledge post", actor: "Rain for All", target: "Maintenance checklist", time: "3 days ago" }
+      ];
+
+      const roleMatrix = [
+        { role: "Super Admin", scope: "All countries / all schools", permissions: "Create, edit, approve, monitor, export" },
+        { role: "Regional Manager", scope: "Assigned country or schools", permissions: "Manage schools, teachers, BiTS members, records" },
+        { role: "Teacher", scope: "Own school", permissions: "Approve students, check records, enter data" },
+        { role: "BiTS Student", scope: "Own school", permissions: "Enter water data and maintenance checks" },
+        { role: "Viewer", scope: "Assigned dashboard", permissions: "View only" }
+      ];
+
+      const navItems = [
+        ["Dashboard", "▦"],
+        ["Schools", "🏫"],
+        ["Users & Roles", "👥"],
+        ["BiTS Approval", "✅"],
+        ["Data Monitoring", "▥"],
+        ["Data Structure", "⌁"],
+        ["Settings", "⚙"]
+      ];
+
+      const adminNavItems = [
+        ["Dashboard", "D"],
+        ["Schools & Facilities", "S"],
+        ["Data", "Q"],
+        ["Content", "C"],
+        ["Users & Approval", "U"],
+        ["Support & Reports", "R"]
+      ];
+
+      let active = "Dashboard";
+      let schoolQuery = "";
+      let editingSchoolId = null;
+      let selectedSchoolId = null;
+      let editingPointsSchoolId = null;
+      let selectedActivityIndex = null;
+      let editingActivity = false;
+      let bitsTab = "Pending";
+      let dataFilters = {
+        country: "All",
+        school: "All Schools",
+        dateRange: "This Week",
+        status: "All"
+      };
+
+      function badge(status) {
+        const cls = status.replace(" ", "");
+        return `<span class="badge ${cls}">${status}</span>`;
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function daysSinceLastRecord(school) {
+        if (school.lastRecord === "Today") return 0;
+        if (school.lastRecord === "Yesterday") return 1;
+        const match = String(school.lastRecord || "").match(/(\d+)/);
+        return match ? Number(match[1]) : 999;
+      }
+
+      function getSchoolStatus(school) {
+        const days = daysSinceLastRecord(school);
+        if (days > 7 || Number(school.records7d || 0) === 0) return "Inactive";
+        if (Number(school.records7d || 0) < 3) return "Needs Check";
+        return "Active";
+      }
+
+      function bitsStatus(user) {
+        if (user.status === "Active") return "Approved";
+        return user.status;
+      }
+
+      function schoolParticipation(school) {
+        if (Number.isFinite(Number(school.participation))) return Number(school.participation);
+        const bitsCount = users.filter((user) => user.role === "BiTS Student" && user.school === school.name).length;
+        return Math.min(100, Math.round((Number(school.records7d || 0) * 12) + (bitsCount * 8) + 28));
+      }
+
+      function schoolScore(school) {
+        if (Number.isFinite(Number(school.score))) return Number(school.score);
+        const statusBonus = getSchoolStatus(school) === "Active" ? 12 : getSchoolStatus(school) === "Needs Check" ? 4 : 0;
+        const activityBonus = activities.filter((activity) => activity.school === school.name).length * 6;
+        return Math.min(100, Math.round((Number(school.tank || 0) * 0.38) + (Number(school.records7d || 0) * 7) + (schoolParticipation(school) * 0.16) + statusBonus + activityBonus));
+      }
+
+      function rankedSchoolsForDashboard() {
+        return [...schools].sort((a, b) => schoolScore(b) - schoolScore(a));
+      }
+
+      function rankClass(rank) {
+        if (rank === 1) return "gold";
+        if (rank === 2) return "silver";
+        if (rank === 3) return "bronze";
+        return "";
+      }
+
+      function metric(icon, label, value, caption) {
+        return `
+          <article class="metric">
+            <div class="metric-row">
+              <div><label>${label}</label><strong>${value}</strong></div>
+              <div class="metric-icon">${icon}</div>
+            </div>
+            <p>${caption}</p>
+          </article>
+        `;
+      }
+
+      function facilityCapacityFor(schoolName) {
+        const facility = facilities.find((item) => item.school === schoolName);
+        return facility ? facility.capacity : "Not set";
+      }
+
+      function parseLiters(value) {
+        return Number(String(value || "").replace(/[^0-9]/g, ""));
+      }
+
+      function formatLiters(value) {
+        return `${Number(value || 0).toLocaleString()} L`;
+      }
+
+      function setFieldValue(name, value) {
+        const field = document.querySelector(`[name="${name}"]`);
+        if (field) field.value = value || "";
+      }
+
+      function fieldValue(form, name) {
+        return String(form.get(name) || "").trim();
+      }
+
+      function uploadedImageUrls(form, name) {
+        return form.getAll(name)
+          .filter((file) => file && file.name)
+          .map((file) => URL.createObjectURL(file));
+      }
+
+      function uploadedMediaItems(input) {
+        return Array.from(input.files || [])
+          .filter((file) => file && file.name)
+          .map((file) => ({
+            url: URL.createObjectURL(file),
+            type: file.type.startsWith("video/") ? "video" : "image",
+            name: file.name
+          }));
+      }
+
+      function currentVolumeFor(school) {
+        const capacity = parseLiters(facilityCapacityFor(school.name));
+        return Math.round(capacity * (Number(school.tank || 0) / 100));
+      }
+
+      function cumulativeCollectionFor(school) {
+        const capacity = parseLiters(facilityCapacityFor(school.name));
+        return Math.round((capacity * 1.8) + (Number(school.records7d || 0) * 140));
+      }
+
+      function cumulativeUsageFor(school) {
+        return Math.round((Number(school.usage || 0) * 24) + (Number(school.records7d || 0) * 95));
+      }
+
+      function qualityParameterFor(key) {
+        return qualityParameters.find((item) => item.key === key) || { key, label: key, unit: "", standard: "" };
+      }
+
+      function qualityReportsForSchool(schoolName) {
+        return appQualityReports.filter((report) => report.school === schoolName);
+      }
+
+      function latestQualityReportFor(schoolName) {
+        return qualityReportsForSchool(schoolName)
+          .slice()
+          .sort((a, b) => b.date.localeCompare(a.date))[0];
+      }
+
+      function numericMeasurementValue(value) {
+        const parsed = Number(String(value ?? "").replace(/[^0-9.-]/g, ""));
+        return Number.isFinite(parsed) ? parsed : null;
+      }
+
+      function qualityReportStatus(report) {
+        if (!report) return "Pending";
+        for (const item of report.measurements || []) {
+          const def = qualityParameterFor(item.key);
+          if (item.key === "coliforms" || item.key === "eColi") {
+            if (!/none\s*found/i.test(String(item.value))) return "Needs Check";
+          }
+          const value = numericMeasurementValue(item.value);
+          if (value === null) continue;
+          if (typeof def.min === "number" && value < def.min) return "Needs Check";
+          if (typeof def.max === "number" && value > def.max) return "Needs Check";
+        }
+        return "Active";
+      }
+
+      function qualityMeasurementCard(measurement) {
+        const def = qualityParameterFor(measurement.key);
+        const unit = def.unit ? ` ${def.unit}` : "";
+        return `
+          <div class="quality-measure">
+            <span>${def.label}</span>
+            <strong>${measurement.value}${unit}</strong>
+          </div>
+        `;
+      }
+
+      function schoolQualityBlock(school) {
+        const report = latestQualityReportFor(school.name);
+        if (!report) {
+          return `
+            <div class="quality-data">
+              <div class="quality-data-head">
+                <div><h4>Water Quality Data</h4><p>No app-submitted water quality report yet.</p></div>
+                ${badge("Pending")}
+              </div>
+            </div>
+          `;
+        }
+        const measurements = (report.measurements || []).filter((item) => String(item.value ?? "").trim() !== "");
+        return `
+          <div class="quality-data">
+            <div class="quality-data-head">
+              <div><h4>Water Quality Data</h4><p>${report.date} / ${report.author} / ${report.source}</p></div>
+              ${badge(qualityReportStatus(report))}
+            </div>
+            <div class="quality-measure-grid">
+              ${measurements.map(qualityMeasurementCard).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      function qualityReportDetailCard(report) {
+        const measurements = (report.measurements || []).filter((item) => String(item.value ?? "").trim() !== "");
+        return `
+          <article class="record-graph-card">
+            <h3>${report.date} / ${report.author}</h3>
+            <p>${report.note} Attached file: ${report.reportImage}</p>
+            <div class="quality-measure-grid">
+              ${measurements.map(qualityMeasurementCard).join("")}
+            </div>
+          </article>
+        `;
+      }
+
+      function recordSeriesFor(school) {
+        const capacity = parseLiters(facilityCapacityFor(school.name)) || 10000;
+        const tank = Number(school.tank || 0);
+        const usage = Number(school.usage || 0);
+        return {
+          quantity: [tank - 18, tank - 11, tank - 7, tank - 4, tank - 2, tank].map((value) => Math.max(0, Math.min(100, value))),
+          volume: [0.68, 0.73, 0.77, 0.81, 0.86, tank / 100].map((rate) => Math.round(capacity * Math.max(0.15, rate))),
+          usage: [usage * 0.72, usage * 0.8, usage * 0.92, usage * 0.88, usage * 0.96, usage].map((value) => Math.round(value)),
+          cumulative: [0.48, 0.58, 0.66, 0.78, 0.9, 1].map((rate) => Math.round(cumulativeUsageFor(school) * rate))
+        };
+      }
+
+      function recordGraph(title, caption, values, unit, color) {
+        const max = Math.max(...values, 1);
+        const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        return `
+          <article class="record-graph-card">
+            <h3>${title}</h3>
+            <p>${caption}</p>
+            <svg viewBox="0 0 320 168" role="img" aria-label="${title} graph">
+              <path d="M28 24 H296 M28 62 H296 M28 100 H296" stroke="#e2e8f0" stroke-width="1" />
+              <polyline fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" points="${chartPoints(values, max, 320, 128, 28)}" />
+              ${values.map((value, index) => {
+                const x = 28 + (index * (264 / (values.length - 1)));
+                const y = 100 - ((value / max) * 72);
+                return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.6" fill="${color}" />`;
+              }).join("")}
+              ${labels.map((label, index) => {
+                const x = 28 + (index * (264 / (labels.length - 1)));
+                return `<text x="${x}" y="154" text-anchor="middle" fill="#64748b" font-size="10" font-weight="700">${label}</text>`;
+              }).join("")}
+              <text x="296" y="18" text-anchor="end" fill="#334155" font-size="12" font-weight="800">${values[values.length - 1].toLocaleString()}${unit}</text>
+            </svg>
+          </article>
+        `;
+      }
+
+      function openDataGraph(schoolId) {
+        const school = schools.find((item) => item.id === Number(schoolId));
+        if (!school) {
+          toast("School data was not found.");
+          return;
+        }
+        const series = recordSeriesFor(school);
+        const qualityReports = qualityReportsForSchool(school.name);
+        document.querySelector("#dataGraphTitle").textContent = `${school.name} Records`;
+        document.querySelector("#dataGraphSubtitle").textContent = `${school.country} / Last updated: ${school.lastRecord}`;
+        document.querySelector("#dataGraphContent").innerHTML = `
+          <div class="record-graph-grid">
+            ${recordGraph("Current Quantity", "Tank level trend entered by BiTS members.", series.quantity, "%", "#0284c7")}
+            ${recordGraph("Stored Volume", "Estimated volume based on facility capacity.", series.volume, " L", "#7c3aed")}
+            ${recordGraph("Recent Usage", "Daily usage records for this week.", series.usage, " L/day", "#059669")}
+            ${recordGraph("Cumulative Usage", "Accumulated usage from submitted records.", series.cumulative, " L", "#f59e0b")}
+          </div>
+          <div class="quality-report-list">
+            <div class="panel-head" style="margin-bottom:0">
+              <div><h2>App Water Quality Records</h2><p>Water-quality parameters entered from the SkyBot mobile app. Unmeasured parameters are hidden.</p></div>
+            </div>
+            ${qualityReports.length ? qualityReports.map(qualityReportDetailCard).join("") : `<div class="empty">No app-submitted water quality records for this school yet.</div>`}
+          </div>
+        `;
+        document.querySelector("#dataGraphModal").classList.add("show");
+      }
+
+      function closeDataGraphModal() {
+        document.querySelector("#dataGraphModal").classList.remove("show");
+      }
+
+      function clearPointsErrors() {
+        document.querySelectorAll("[data-points-error-for]").forEach((node) => {
+          node.textContent = "";
+        });
+      }
+
+      function setPointsError(name, message) {
+        const node = document.querySelector(`[data-points-error-for="${name}"]`);
+        if (node) node.textContent = message;
+      }
+
+      function openPointsModal(schoolId) {
+        clearPointsErrors();
+        editingPointsSchoolId = Number(schoolId);
+        const school = schools.find((item) => item.id === editingPointsSchoolId);
+        if (!school) {
+          toast("School was not found.");
+          return;
+        }
+        document.querySelector("#pointsSchoolName").value = school.name;
+        document.querySelector("#schoolPoints").value = schoolScore(school);
+        document.querySelector("#schoolParticipation").value = schoolParticipation(school);
+        document.querySelector("#pointsModal").classList.add("show");
+        document.querySelector("#schoolPoints").focus();
+      }
+
+      function closePointsModal() {
+        editingPointsSchoolId = null;
+        document.querySelector("#pointsModal").classList.remove("show");
+      }
+
+      function savePointsFromForm(event) {
+        event.preventDefault();
+        clearPointsErrors();
+        const points = Number(document.querySelector("#schoolPoints").value);
+        const participation = Number(document.querySelector("#schoolParticipation").value);
+        const errors = {};
+        if (!Number.isFinite(points) || points < 0 || points > 100) errors.points = "Use a value from 0 to 100.";
+        if (!Number.isFinite(participation) || participation < 0 || participation > 100) errors.participation = "Use a value from 0 to 100.";
+        Object.entries(errors).forEach(([name, message]) => setPointsError(name, message));
+        if (Object.keys(errors).length) return;
+
+        const school = schools.find((item) => item.id === editingPointsSchoolId);
+        if (!school) {
+          closePointsModal();
+          toast("School was not found.");
+          return;
+        }
+        school.score = Math.round(points);
+        school.participation = Math.round(participation);
+        closePointsModal();
+        render();
+        toast(`${school.name} points updated.`);
+      }
+
+      function dashboardTotals() {
+        return {
+          collection: schools.reduce((sum, school) => sum + cumulativeCollectionFor(school), 0),
+          usage: schools.reduce((sum, school) => sum + cumulativeUsageFor(school), 0),
+          schools: schools.length,
+          bits: users.filter((user) => user.role === "BiTS Student").length
+        };
+      }
+
+      function chartPoints(values, maxValue, width = 520, height = 180, pad = 22) {
+        return values.map((value, index) => {
+          const x = pad + (index * ((width - pad * 2) / (values.length - 1)));
+          const y = height - pad - ((value / maxValue) * (height - pad * 2));
+          return `${x.toFixed(1)},${y.toFixed(1)}`;
+        }).join(" ");
+      }
+
+      function dashboardMiniCharts() {
+        const totals = dashboardTotals();
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+        const charts = [
+          { label: "Cumulative Rain Collected", color: "#0284c7", value: `${totals.collection.toLocaleString()} L`, caption: "Total collected rainwater", values: [0.28, 0.42, 0.58, 0.73, 0.88, 1].map((rate) => Math.round(totals.collection * rate)) },
+          { label: "Cumulative Rain Used", color: "#059669", value: `${totals.usage.toLocaleString()} L`, caption: "Total usage from BiTS records", values: [0.2, 0.34, 0.49, 0.68, 0.84, 1].map((rate) => Math.round(totals.usage * rate)) },
+          { label: "Cumulative Schools", color: "#7c3aed", value: totals.schools.toLocaleString(), caption: "Registered Rain Schools", values: [1, 2, 2, 3, Math.max(3, totals.schools - 1), totals.schools] },
+          { label: "Cumulative BiTS Members", color: "#f59e0b", value: totals.bits.toLocaleString(), caption: "Registered and pending members", values: [0, 1, 1, 2, Math.max(2, totals.bits), totals.bits] }
+        ];
+        return `
+          <div class="dashboard-charts">
+            ${charts.map((item) => `
+              <article class="mini-chart-card" style="--chart-color:${item.color}">
+                <div class="mini-chart-head">
+                  <div><label>${item.label}</label><strong>${item.value}</strong></div>
+                  <span class="mini-chart-dot"></span>
+                </div>
+                <svg viewBox="0 0 220 108" role="img" aria-label="${item.label} graph">
+                  <path d="M16 16 H204 M16 42 H204 M16 68 H204" stroke="#e2e8f0" stroke-width="1" />
+                  <polyline fill="none" stroke="${item.color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${chartPoints(item.values, Math.max(...item.values, 1), 220, 84, 14)}" />
+                  ${months.map((month, index) => {
+                    const x = 14 + (index * (192 / (months.length - 1)));
+                    return `<text x="${x}" y="100" text-anchor="middle" fill="#64748b" font-size="9" font-weight="700">${month}</text>`;
+                  }).join("")}
+                </svg>
+                <p>${item.caption}</p>
+              </article>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      function dashboardRankingPanel() {
+        const ranked = rankedSchoolsForDashboard();
+        const totalPoints = ranked.reduce((sum, school) => sum + schoolScore(school), 0);
+        const avgParticipation = ranked.length ? Math.round(ranked.reduce((sum, school) => sum + schoolParticipation(school), 0) / ranked.length) : 0;
+        return `
+          <section class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Rain School Ranking & Operation Status</h2>
+                <p>Points, BiTS participation, recent records, tank level, and operating status are managed in one view.</p>
+              </div>
+              <div class="score-box">
+                <strong>${totalPoints.toLocaleString()} pts</strong>
+                <span>Avg. participation ${avgParticipation}%</span>
+              </div>
+            </div>
+            <div class="data-table">
+              <table>
+                <thead><tr><th>Rank</th><th>School</th><th>Points</th><th>Participation</th><th>Last Record</th><th>Tank</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>
+                  ${ranked.map((school, index) => {
+                    const rank = index + 1;
+                    const participation = schoolParticipation(school);
+                    return `
+                      <tr>
+                        <td><span class="rank-mark ${rankClass(rank)}">${rank}</span></td>
+                        <td><strong>${school.name}</strong><br><span style="color:var(--slate-500); font-size:12px">${school.country}</span></td>
+                        <td><strong>${schoolScore(school)} pts</strong></td>
+                        <td>
+                          <strong>${participation}%</strong>
+                          <div class="participation-meter"><b style="--w:${participation}%"></b></div>
+                        </td>
+                        <td>${school.lastRecord}</td>
+                        <td><div class="progress-line"><div class="progress"><b style="--w:${school.tank}%"></b></div><strong>${school.tank}%</strong></div></td>
+                        <td>${badge(getSchoolStatus(school))}</td>
+                        <td><button class="btn soft" data-edit-points="${school.id}">Edit</button></td>
+                      </tr>
+                    `;
+                  }).join("")}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        `;
+      }
+
+      function renderNav() {
+        document.querySelector("#nav").innerHTML = adminNavItems.map(([label, icon]) => `
+          <button class="${active === label ? "active" : ""}" data-nav="${label}">
+            <span>${icon}</span><span class="nav-label">${label}</span>
+          </button>
+        `).join("");
+        document.querySelectorAll("[data-nav]").forEach((button) => {
+          button.addEventListener("click", () => {
+            active = button.dataset.nav;
+            render();
+          });
+        });
+      }
+
+      function dashboard() {
+        return `
+          ${dashboardMiniCharts()}
+          <div style="height:24px"></div>
+          ${dashboardRankingPanel()}
+        `;
+      }
+
+      function schoolsPage() {
+        const filtered = schools.filter((school) => `${school.name} ${school.country}`.toLowerCase().includes(schoolQuery.toLowerCase()));
+        return `
+          <section class="panel">
+            <div class="panel-head">
+              <div><h2>School & Facility Management</h2><p>Manage each school's public profile and rainwater facility details together.</p></div>
+              <button class="btn primary" data-action="school">＋ Add New School</button>
+            </div>
+            <div class="toolbar">
+              <div class="search-wrap"><span>⌕</span><input id="schoolSearch" value="${schoolQuery}" placeholder="Search school or country..." /></div>
+            </div>
+            <div class="grid cards2">
+              ${filtered.map((school) => {
+                const facility = facilities.find((item) => item.school === school.name) || {};
+                return `
+                <article class="entity-card">
+                  <div class="entity-top">
+                    <div><h3>${school.name}</h3><p>${school.country}</p></div>
+                    ${badge(getSchoolStatus(school))}
+                  </div>
+                  <div class="entity-stats">
+                    <div class="stat"><span>Students</span><strong>${school.studentCount ?? school.students ?? 0}</strong></div>
+                    <div class="stat"><span>Teachers</span><strong>${school.teacherCount ?? "-"}</strong></div>
+                    <div class="stat"><span>Max Capacity</span><strong>${facility.capacity || "Not set"}</strong></div>
+                    <div class="stat"><span>Catchment Size</span><strong>${facility.collectionArea || "Not set"}</strong></div>
+                    <div class="stat"><span>Filter System</span><strong>${facility.filtration || "Not set"}</strong></div>
+                    <div class="stat"><span>Installed</span><strong>${facility.installDate || "Not set"}</strong></div>
+                    <div class="stat"><span>Last Record</span><strong>${school.lastRecord}</strong></div>
+                    <div class="stat"><span>7D Records</span><strong>${school.records7d}</strong></div>
+                  </div>
+                  <div class="approval-actions">
+                    <button class="btn ghost" data-edit-school="${school.id}">Edit Info</button>
+                  </div>
+                </article>
+              `;}).join("")}
+            </div>
+          </section>
+        `;
+      }
+
+      function schoolDetailDrawer(school) {
+        const facility = facilities.find((item) => item.school === school.name) || {};
+        const latestRecord = records.find((record) => record.school === school.name);
+        return `
+          <div class="drawer-head">
+            <div><span>${school.country}</span><h2>${school.name}</h2></div>
+            <button class="modal-close" id="closeSchoolDrawer" type="button">x</button>
+          </div>
+          <div class="drawer-body">
+            <section class="drawer-section">
+              <h3>Basic Info</h3>
+              <div class="detail-list">
+                <div class="detail-row"><span>Country</span><strong>${school.country}</strong></div>
+                <div class="detail-row"><span>Students</span><strong>${school.studentCount ?? school.students ?? 0}</strong></div>
+                <div class="detail-row"><span>Teachers</span><strong>${school.teacherCount ?? "-"}</strong></div>
+                <div class="detail-row"><span>Status</span><strong>${getSchoolStatus(school)}</strong></div>
+              </div>
+            </section>
+            <section class="drawer-section">
+              <h3>RFD System Info</h3>
+              <div class="detail-list">
+                <div class="detail-row"><span>Tank Capacity</span><strong>${facility.capacity || "Not set"}</strong></div>
+                <div class="detail-row"><span>Catchment Size</span><strong>${facility.collectionArea || "Not set"}</strong></div>
+                <div class="detail-row"><span>Filter Type</span><strong>${facility.filtration || "Not set"}</strong></div>
+                <div class="detail-row"><span>Installation Date</span><strong>${facility.installDate || "Not set"}</strong></div>
+              </div>
+            </section>
+            <section class="drawer-section">
+              <h3>Assigned Users</h3>
+              <div class="detail-list">
+                <div class="detail-row"><span>Coordinator</span><strong>${school.manager || "Unassigned"}</strong></div>
+                <div class="detail-row"><span>Teacher</span><strong>${school.teacher || "Unassigned"}</strong></div>
+                <div class="detail-row"><span>BiTS Students</span><strong>${users.filter((user) => user.role === "BiTS Student" && user.school === school.name).length}</strong></div>
+              </div>
+            </section>
+            <section class="drawer-section">
+              <h3>Data Status</h3>
+              <div class="entity-stats" style="grid-template-columns:repeat(2,minmax(0,1fr)); margin-top:0">
+                <div class="stat"><span>Current Quantity</span><strong>${currentVolumeFor(school).toLocaleString()} L</strong></div>
+                <div class="stat"><span>Recent Usage</span><strong>${Number(school.usage || 0).toLocaleString()} L/day</strong></div>
+                <div class="stat"><span>7-Day Records</span><strong>${school.records7d}</strong></div>
+                <div class="stat"><span>Last Record</span><strong>${school.lastRecord}</strong></div>
+              </div>
+            </section>
+            <section class="drawer-section">
+              <h3>Recent Records</h3>
+              <div class="detail-list">
+                <div class="detail-row"><span>Latest type</span><strong>${latestRecord ? latestRecord.type : "No record"}</strong></div>
+                <div class="detail-row"><span>Latest value</span><strong>${latestRecord ? latestRecord.value : "-"}</strong></div>
+                <div class="detail-row"><span>Recorder</span><strong>${latestRecord ? latestRecord.recorder : "-"}</strong></div>
+              </div>
+            </section>
+          </div>
+          <div class="drawer-actions">
+            <button class="btn ghost" data-jump="Data">View Data</button>
+            <button class="btn primary" data-edit-school="${school.id}">Edit Info</button>
+          </div>
+        `;
+      }
+
+      function openSchoolDrawer(id) {
+        const school = schools.find((item) => item.id === Number(id));
+        if (!school) return;
+        selectedSchoolId = school.id;
+        document.querySelector("#schoolDrawerContent").innerHTML = schoolDetailDrawer(school);
+        document.querySelector("#schoolDrawerBackdrop").classList.add("show");
+        document.querySelector("#schoolDrawer").classList.add("show");
+        bindPageEvents();
+      }
+
+      function closeSchoolDrawer() {
+        selectedSchoolId = null;
+        document.querySelector("#schoolDrawerBackdrop").classList.remove("show");
+        document.querySelector("#schoolDrawer").classList.remove("show");
+      }
+
+      function usersPage() {
+        return `
+          <div class="grid two">
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Users & Role Assignment</h2><p>Control who can view, manage, approve, and record field data.</p></div>
+                <button class="btn primary" data-action="invite">＋ Invite User</button>
+              </div>
+              <div class="data-table">
+                <table>
+                  <thead><tr><th>User</th><th>Role</th><th>Country</th><th>Scope</th><th>Status</th></tr></thead>
+                  <tbody>${users.map((u) => `<tr><td><strong>${u.name}</strong></td><td>${u.role}</td><td>${u.country}</td><td>${u.school}</td><td>${badge(u.status)}</td></tr>`).join("")}</tbody>
+                </table>
+              </div>
+            </section>
+            <section class="panel">
+              <h2>Role Matrix</h2>
+              <p>Minimum permission structure for Phase 1 operation.</p>
+              <div class="grid" style="margin-top:20px">
+                ${roleMatrix.map((role) => `<div class="role-box"><strong>🛡 ${role.role}</strong><small>Scope: ${role.scope}</small><p>${role.permissions}</p></div>`).join("")}
+              </div>
+            </section>
+          </div>
+        `;
+      }
+
+      function bitsApproval() {
+        const bitsUsers = users.filter((user) => user.role === "BiTS Student");
+        return `
+          <section class="panel">
+            <h2>BiTS Member Approval</h2>
+            <p>Approve only verified students so school data remains reliable.</p>
+            <div class="grid cards2" style="margin-top:20px">
+              ${bitsUsers.map((user) => `
+                <article class="approval-card">
+                  <div class="entity-top">
+                    <div><h3>${user.name}</h3><p>${user.school} · ${user.country}</p></div>
+                    ${badge(user.status)}
+                  </div>
+                  <div class="entity-stats" style="grid-template-columns:repeat(3,1fr)">
+                    <div class="stat"><span>Requested Role</span><strong>BiTS Student</strong></div>
+                    <div class="stat"><span>Scope</span><strong>${user.school}</strong></div>
+                    <div class="stat"><span>Reviewer</span><strong>Teacher / Manager</strong></div>
+                  </div>
+                  <div class="approval-actions">
+                    <button class="btn success" data-approve="${user.name}">Approve</button>
+                    <button class="btn soft" data-action="assign">Assign School</button>
+                    <button class="btn ghost" data-action="details">View Details</button>
+                  </div>
+                </article>
+              `).join("")}
+            </div>
+          </section>
+        `;
+      }
+
+      function bitsApprovalV2() {
+        const bitsUsers = users.filter((user) => user.role === "BiTS Student" && (bitsTab === "All" || bitsStatus(user) === bitsTab));
+        return `
+          <section class="panel">
+            <div class="panel-head">
+              <div><h2>BiTS Data Entry Approval</h2><p>Review and manage student access for entering school data.</p></div>
+            </div>
+            <div class="tab-row">
+              ${["Pending", "Approved", "Rejected", "All"].map((tab) => `<button class="${bitsTab === tab ? "active" : ""}" data-bits-tab="${tab}">${tab}</button>`).join("")}
+            </div>
+            <div class="data-table">
+              <table>
+                <thead><tr><th>Student</th><th>School</th><th>Country</th><th>Requested</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>
+                  ${bitsUsers.length === 0 ? `<tr><td colspan="6" style="text-align:center; color:var(--slate-500); padding:24px">No ${bitsTab.toLowerCase()} BiTS requests found.</td></tr>` : bitsUsers.map((user) => `
+                    <tr>
+                      <td><strong>${user.name}</strong></td>
+                      <td>${user.school}</td>
+                      <td>${user.country}</td>
+                      <td>2 hours ago</td>
+                      <td>${badge(bitsStatus(user))}</td>
+                      <td>${bitsStatus(user) === "Pending" ? `<div class="approval-actions" style="margin-top:0"><button class="btn success" data-approve="${user.name}">Approve</button><button class="btn soft" data-reject="${user.name}">Reject</button></div>` : `<button class="btn soft" data-action="details">View</button>`}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        `;
+      }
+
+      function dataMonitoring() {
+        return `
+          <div class="grid metrics" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+            ${metric("💧", "Avg. Tank Level", "53%", "Across active schools")}
+            ${metric("⌁", "Daily Usage", "1,070 L", "Latest reported usage")}
+            ${metric("⚠", "No Record > 7 Days", "1", "Myanmar HDS School")}
+          </div>
+          <div style="height:24px"></div>
+          <section class="panel">
+            <div class="panel-head">
+              <div><h2>Recent Field Records</h2><p>Track who recorded what, when, and for which school.</p></div>
+              <button class="btn ghost">⬇ Export CSV</button>
+            </div>
+            <div class="data-table">
+              <table>
+                <thead><tr><th>School</th><th>Type</th><th>Value</th><th>Recorder</th><th>Time</th><th>Action</th></tr></thead>
+                <tbody>${records.map((r) => `<tr><td><strong>${r.school}</strong></td><td>${r.type}</td><td>${r.value}</td><td>${r.recorder}</td><td>${r.time}</td><td><button class="btn soft icon" style="min-height:34px">👁</button></td></tr>`).join("")}</tbody>
+              </table>
+            </div>
+          </section>
+        `;
+      }
+
+      function recordsQa() {
+        const flagged = records.filter((item) => item.value.includes("Filter") || item.type === "Maintenance").length + facilities.filter((item) => item.risk !== "Normal").length;
+        return `
+          <div class="grid metrics" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+            ${metric("QA", "Records to Review", flagged, "Maintenance and water quality exceptions")}
+            ${metric("pH", "Quality Watch", "2", "pH/TDS readings need trend review")}
+            ${metric("LOG", "Audit Required", "4", "Manual corrections should be tracked")}
+          </div>
+          <div style="height:24px"></div>
+          <div class="qa-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Data QA Queue</h2><p>Review submitted water level, usage, quality, and maintenance records before reporting.</p></div>
+                <button class="btn ghost">Export QA Log</button>
+              </div>
+              <div class="stack">
+                ${records.map((record, index) => `<article class="record-card"><div><h3>${record.type} - ${record.school}</h3><p>${record.value} by ${record.recorder} / ${record.time}</p><span>${index === 3 ? "Flag: maintenance review" : "Flag: none"}</span></div><div class="approval-actions" style="margin-top:0"><button class="btn success" data-action="qa-approve">Approve</button><button class="btn soft" data-action="qa-correct">Correct</button></div></article>`).join("")}
+              </div>
+            </section>
+            <section class="panel">
+              <h2>Anomaly Rules</h2>
+              <p>The current app visualizes pH, temperature, EC, and TDS. Admin must own the rules.</p>
+              <div class="detail-list">
+                <div class="detail-row"><span>pH accepted range</span><strong>6.5 - 8.5</strong></div>
+                <div class="detail-row"><span>TDS watch threshold</span><strong>150 ppm+</strong></div>
+                <div class="detail-row"><span>No record threshold</span><strong>7 days</strong></div>
+              </div>
+            </section>
+          </div>
+        `;
+      }
+
+      function activitiesPage() {
+        return `
+          <section class="panel">
+            <div class="panel-head">
+              <div><h2>Activities</h2><p>Review or delete activity posts submitted from the app.</p></div>
+            </div>
+            <div class="data-table">
+              <table>
+                <thead><tr><th>Activity</th><th>School</th><th>Type</th><th>Author</th><th>Media</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>
+                  ${activities.map((item, index) => `<tr><td><strong>${item.title}</strong></td><td>${item.school}</td><td>${item.type}</td><td>${item.author}</td><td>${item.media} files</td><td>${badge("Active")}</td><td><div class="approval-actions" style="margin-top:0"><button class="btn soft" data-review-activity="${index}">Review</button><button class="btn ghost" data-delete-activity="${index}">Delete</button></div></td></tr>`).join("")}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        `;
+      }
+
+      function knowledgeCms() {
+        return `
+          <section class="panel">
+            <div class="panel-head">
+              <div><h2>Knowledge Hub</h2><p>Manage news, research, tips, and educational content shown in the Info section of the app.</p></div>
+              <button class="btn primary" data-action="knowledge">New Post</button>
+            </div>
+            <div class="data-table">
+              <table>
+                <thead><tr><th>Title</th><th>Category</th><th>Owner</th><th>Images</th><th>Comments</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>${knowledgePosts.map((post) => `<tr><td><strong>${post.title}</strong></td><td>${post.category}</td><td>${post.owner}</td><td>${(post.images || []).length} files</td><td>${post.comments}</td><td>${badge(post.status === "Published" ? "Active" : "Pending")}</td><td><button class="btn soft" data-action="edit-post">Edit</button></td></tr>`).join("")}</tbody>
+              </table>
+            </div>
+          </section>
+        `;
+      }
+
+      function notificationsPage() {
+        return `
+          <section class="panel">
+            <div class="panel-head">
+              <div><h2>Notifications</h2><p>Own the operational alerts shown in the app notification dropdown.</p></div>
+              <button class="btn primary" data-action="notification">New Rule</button>
+            </div>
+            <div class="grid cards2">
+              ${notificationRules.map((rule) => `<div class="setting-row"><div><h3>${rule.name}</h3><p>${rule.trigger} / Audience: ${rule.audience}</p></div><div>${badge(rule.status === "Active" ? "Active" : "Pending")}</div></div>`).join("")}
+            </div>
+          </section>
+        `;
+      }
+
+      function dataStructure() {
+        const variables = [
+          ["School Information", "Country, School Name, Location, Coordinator, Tank Capacity"],
+          ["User Information", "Name, Role, School, BiTS Status, Permission Scope"],
+          ["Water Quantity", "Current Storage, Tank Level, Daily Usage, Total Collection"],
+          ["Water Quality", "pH, EC, TDS, Temperature, Quality Status"],
+          ["Maintenance", "Tank, Filter, Gutter, Valve, Pump Status"],
+          ["Participation", "Record Date, Recorder, Weekly Count, Participation Rate"]
+        ];
+        return `
+          <section class="panel">
+            <h2>Data Structure for Rain School Monitoring</h2>
+            <p>Keep the first data model simple, consistent, and useful for field operation, reports, and future research.</p>
+            <div class="grid cards2" style="margin-top:24px">
+              ${variables.map(([title, body]) => `<div class="structure-card"><h3>${title}</h3><p>${body}</p></div>`).join("")}
+            </div>
+          </section>
+          <div style="height:24px"></div>
+          <section class="panel">
+            <h3>Recommended Recording Frequency</h3>
+            <div class="data-table" style="margin-top:16px">
+              <table>
+                <thead><tr><th>Variable</th><th>Unit</th><th>Frequency</th></tr></thead>
+                <tbody>
+                  ${[
+                    ["Tank Level", "% or cm", "Daily / Weekly"],
+                    ["Current Storage", "L", "Daily / Weekly"],
+                    ["Daily Usage", "L/day", "Daily / Weekly"],
+                    ["pH", "-", "Weekly"],
+                    ["TDS", "ppm", "Weekly"],
+                    ["Maintenance Status", "OK / Check / Repair", "Weekly"]
+                  ].map((row) => `<tr><td><strong>${row[0]}</strong></td><td>${row[1]}</td><td>${row[2]}</td></tr>`).join("")}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        `;
+      }
+
+      function pageDivider(label, description) {
+        return `
+          <div style="height:24px"></div>
+          <section class="panel" style="box-shadow:none">
+            <div class="panel-head" style="margin-bottom:0">
+              <div><h2>${label}</h2><p>${description}</p></div>
+            </div>
+          </section>
+          <div style="height:16px"></div>
+        `;
+      }
+
+      function schoolsAndFacilitiesPage() {
+        return `
+          ${schoolsPage()}
+        `;
+      }
+
+      function dataAndQaPage() {
+        return `
+          <section class="panel">
+            <div class="panel-head">
+              <div><h2>School Data</h2><p>Review each school's water quantity and usage data in one operational view. Values are entered by BiTS members during field operation.</p></div>
+              <button class="btn ghost">Export CSV</button>
+            </div>
+            <div class="grid cards2">
+              ${schools.map((school) => {
+                const currentVolume = currentVolumeFor(school).toLocaleString();
+                const cumulativeCollection = cumulativeCollectionFor(school).toLocaleString();
+                const latestUsage = Number(school.usage || 0).toLocaleString();
+                const cumulativeUsage = cumulativeUsageFor(school).toLocaleString();
+                const latestRecord = records.find((record) => record.school === school.name);
+                return `
+                  <article class="entity-card">
+                    <div class="entity-top">
+                      <div><h3>${school.name}</h3><p>${school.country} / Last updated: ${school.lastRecord}</p></div>
+                      ${badge(school.status)}
+                    </div>
+                    <div class="entity-stats data-stats">
+                      <div class="stat"><span>Current Quantity</span><strong>${currentVolume} L</strong></div>
+                      <div class="stat"><span>Cumulative Quantity</span><strong>${cumulativeCollection} L</strong></div>
+                      <div class="stat"><span>Recent Usage</span><strong>${latestUsage} L/day</strong></div>
+                      <div class="stat"><span>Cumulative Usage</span><strong>${cumulativeUsage} L</strong></div>
+                    </div>
+                    ${schoolQualityBlock(school)}
+                    <div class="approval-actions">
+                      <button class="btn soft" data-review-records="${school.id}">Review Records</button>
+                      <button class="btn ghost">Export School Data</button>
+                    </div>
+                  </article>
+                `;
+              }).join("")}
+            </div>
+          </section>
+        `;
+      }
+
+      function filteredDataSchools() {
+        return schools.filter((school) => {
+          if (dataFilters.country !== "All" && school.country !== dataFilters.country) return false;
+          if (dataFilters.school !== "All Schools" && school.name !== dataFilters.school) return false;
+          if (dataFilters.status !== "All" && getSchoolStatus(school) !== dataFilters.status) return false;
+          return true;
+        });
+      }
+
+      function dataAndQaPageV2() {
+        const filteredSchools = filteredDataSchools();
+        return `
+          <section class="panel">
+            <div class="panel-head">
+              <div><h2>Data Monitoring & Export</h2><p>Filter and export Rain School operation data for research and analysis.</p></div>
+              <button class="btn primary">Export Filtered CSV</button>
+            </div>
+            <div class="filter-panel">
+              <div class="filter-field"><label>Country</label><select data-filter="country"><option>All</option><option>Cambodia</option><option>Myanmar</option><option>Vietnam</option></select></div>
+              <div class="filter-field"><label>School</label><select data-filter="school"><option>All Schools</option>${schools.map((school) => `<option>${school.name}</option>`).join("")}</select></div>
+              <div class="filter-field"><label>Date Range</label><select data-filter="dateRange"><option>This Week</option><option>This Month</option><option>Last 3 Months</option><option>All Time</option></select></div>
+              <div class="filter-field"><label>Status</label><select data-filter="status"><option>All</option><option>Active</option><option>Needs Check</option><option>Inactive</option></select></div>
+            </div>
+            <div class="grid cards2">
+              ${filteredSchools.map((school) => {
+                const currentVolume = currentVolumeFor(school).toLocaleString();
+                const cumulativeCollection = cumulativeCollectionFor(school).toLocaleString();
+                const latestUsage = Number(school.usage || 0).toLocaleString();
+                const cumulativeUsage = cumulativeUsageFor(school).toLocaleString();
+                return `
+                  <article class="entity-card">
+                    <div class="entity-top">
+                      <div><h3>${school.name}</h3><p>${school.country} / Last updated: ${school.lastRecord}</p></div>
+                      ${badge(getSchoolStatus(school))}
+                    </div>
+                    <div class="entity-stats data-stats">
+                      <div class="stat"><span>Current Quantity</span><strong>${currentVolume} L</strong></div>
+                      <div class="stat"><span>Cumulative Quantity</span><strong>${cumulativeCollection} L</strong></div>
+                      <div class="stat"><span>Recent Usage</span><strong>${latestUsage} L/day</strong></div>
+                      <div class="stat"><span>Cumulative Usage</span><strong>${cumulativeUsage} L</strong></div>
+                    </div>
+                    ${schoolQualityBlock(school)}
+                    <div class="approval-actions">
+                      <button class="btn soft" data-review-records="${school.id}">Review Records</button>
+                      <button class="btn ghost">Export School Data</button>
+                    </div>
+                  </article>
+                `;
+              }).join("")}
+              ${filteredSchools.length === 0 ? `<div class="structure-card"><h3>No matching schools</h3><p>Adjust the filters to show school data.</p></div>` : ""}
+            </div>
+          </section>
+        `;
+      }
+
+      function contentCmsPage() {
+        return `
+          ${activitiesPage()}
+          ${knowledgeCms()}
+        `;
+      }
+
+      function usersAndApprovalPage() {
+        return `
+          ${usersPage()}
+          ${pageDivider("BiTS Approval Workflow", "Access approval sits inside people management, not as a lonely island in the sidebar.")}
+          ${bitsApprovalV2()}
+        `;
+      }
+
+      function supportAndReportsPage() {
+        return `
+          ${notificationsPage()}
+        `;
+      }
+
+      function renderPage() {
+        switch (active) {
+          case "Schools & Facilities":
+            return schoolsAndFacilitiesPage();
+          case "Data":
+            return dataAndQaPageV2();
+          case "Content":
+            return contentCmsPage();
+          case "Users & Approval":
+            return usersAndApprovalPage();
+          case "Support & Reports":
+            return supportAndReportsPage();
+          default:
+            return dashboard();
+        }
+      }
+
+      function toast(message) {
+        const el = document.querySelector("#toast");
+        el.textContent = message;
+        el.classList.add("show");
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+      }
+
+      function openSchoolModal(schoolId = null) {
+        clearSchoolErrors();
+        editingSchoolId = schoolId ? Number(schoolId) : null;
+        document.querySelector("#schoolForm").reset();
+        document.querySelector("#schoolModalTitle").textContent = editingSchoolId ? "Edit School & Facility" : "Add Rain School";
+        document.querySelector("#submitSchool").textContent = editingSchoolId ? "Save Changes" : "Add School";
+
+        if (editingSchoolId) {
+          const school = schools.find((item) => item.id === editingSchoolId);
+          if (school) {
+            const facility = facilities.find((item) => item.school === school.name) || {};
+            setFieldValue("name", school.name);
+            setFieldValue("country", school.country);
+            setFieldValue("studentCount", school.studentCount ?? school.students);
+            setFieldValue("teacherCount", school.teacherCount ?? "");
+            setFieldValue("schoolHistory", school.schoolHistory);
+            setFieldValue("schoolIntro", school.schoolIntro);
+            setFieldValue("capacity", parseLiters(facility.capacity || school.capacity));
+            setFieldValue("collectionArea", facility.collectionArea === "Not set" ? "" : facility.collectionArea);
+            setFieldValue("filtration", facility.filtration === "Not set" ? "" : facility.filtration);
+            setFieldValue("installDate", facility.installDate);
+            setFieldValue("facilityOverview", facility.overview);
+          }
+        }
+
+        document.querySelector("#schoolModal").classList.add("show");
+        document.querySelector("#schoolName").focus();
+      }
+
+      function closeSchoolModal() {
+        document.querySelector("#schoolModal").classList.remove("show");
+        editingSchoolId = null;
+      }
+
+      function clearSchoolErrors() {
+        document.querySelectorAll("[data-error-for]").forEach((node) => {
+          node.textContent = "";
+        });
+      }
+
+      function setSchoolError(name, message) {
+        const node = document.querySelector(`[data-error-for="${name}"]`);
+        if (node) node.textContent = message;
+      }
+
+      function validateSchoolForm(data) {
+        clearSchoolErrors();
+        const errors = {};
+        if (!data.name.trim()) errors.name = "School name is required.";
+        if (!data.country.trim()) errors.country = "Country is required.";
+        if (Number.isNaN(data.capacity) || data.capacity <= 0) errors.capacity = "Facility max capacity is required.";
+        if (Number.isNaN(data.studentCount) || data.studentCount < 0) errors.studentCount = "Use 0 or higher.";
+        if (Number.isNaN(data.teacherCount) || data.teacherCount < 0) errors.teacherCount = "Use 0 or higher.";
+        Object.entries(errors).forEach(([name, message]) => setSchoolError(name, message));
+        return Object.keys(errors).length === 0;
+      }
+
+      function addSchoolFromForm(event) {
+        event.preventDefault();
+        const form = new FormData(document.querySelector("#schoolForm"));
+        const existingSchool = editingSchoolId ? schools.find((school) => school.id === editingSchoolId) || {} : {};
+        const existingFacility = editingSchoolId ? facilities.find((facility) => facility.school === existingSchool.name) || {} : {};
+        const schoolMainUploads = uploadedImageUrls(form, "schoolMainPhoto");
+        const schoolGalleryUploads = uploadedImageUrls(form, "schoolGallery");
+        const facilityMainUploads = uploadedImageUrls(form, "facilityMainPhoto");
+        const facilityGalleryUploads = uploadedImageUrls(form, "facilityGallery");
+        const nextSchool = {
+          id: editingSchoolId || Math.max(...schools.map((school) => school.id), 0) + 1,
+          name: fieldValue(form, "name"),
+          country: fieldValue(form, "country"),
+          manager: existingSchool.manager || "Unassigned",
+          teacher: existingSchool.teacher || "Unassigned",
+          students: existingSchool.students || 0,
+          studentCount: Number(form.get("studentCount") || 0),
+          teacherCount: Number(form.get("teacherCount") || 0),
+          schoolMainPhoto: schoolMainUploads[0] || existingSchool.schoolMainPhoto || "",
+          schoolHistory: fieldValue(form, "schoolHistory"),
+          schoolIntro: fieldValue(form, "schoolIntro"),
+          schoolGallery: schoolGalleryUploads.length ? schoolGalleryUploads : (existingSchool.schoolGallery || []),
+          status: existingSchool.status || "Inactive",
+          lastRecord: existingSchool.lastRecord || "Not recorded yet",
+          tank: existingSchool.tank || 0,
+          usage: existingSchool.usage || 0,
+          ph: existingSchool.ph || null,
+          tds: existingSchool.tds || null,
+          capacity: Number(form.get("capacity")),
+          records7d: existingSchool.records7d || 0,
+          score: existingSchool.score || 0,
+          participation: existingSchool.participation || 0
+        };
+        if (!validateSchoolForm(nextSchool)) return;
+        const nextFacility = {
+          school: nextSchool.name,
+          capacity: formatLiters(nextSchool.capacity),
+          collectionArea: fieldValue(form, "collectionArea") || "Not set",
+          filtration: fieldValue(form, "filtration") || "Not set",
+          installDate: fieldValue(form, "installDate"),
+          overview: fieldValue(form, "facilityOverview"),
+          mainPhoto: facilityMainUploads[0] || existingFacility.mainPhoto || "",
+          gallery: facilityGalleryUploads.length ? facilityGalleryUploads : (existingFacility.gallery || []),
+          tanks: 0,
+          maintenance: "Not scheduled",
+          risk: "Needs Check"
+        };
+
+        if (editingSchoolId) {
+          const index = schools.findIndex((school) => school.id === editingSchoolId);
+          const previousName = index >= 0 ? schools[index].name : nextSchool.name;
+          const previousSchool = index >= 0 ? schools[index] : {};
+          schools[index] = { ...previousSchool, ...nextSchool };
+          const facilityIndex = facilities.findIndex((facility) => facility.school === previousName);
+          if (facilityIndex >= 0) {
+            facilities[facilityIndex] = { ...facilities[facilityIndex], ...nextFacility };
+          } else {
+            facilities.unshift(nextFacility);
+          }
+          users.forEach((user) => {
+            if (user.school === previousName) user.school = nextSchool.name;
+          });
+          activities.forEach((activity) => {
+            if (activity.school === previousName) activity.school = nextSchool.name;
+          });
+          records.forEach((record) => {
+            if (record.school === previousName) record.school = nextSchool.name;
+          });
+        } else {
+          schools = [nextSchool, ...schools];
+          facilities.unshift(nextFacility);
+        }
+        const wasEditing = Boolean(editingSchoolId);
+        closeSchoolModal();
+        editingSchoolId = null;
+        schoolQuery = "";
+        render();
+        toast(`${nextSchool.name} ${wasEditing ? "updated" : "saved"} in SKYBOT schools.`);
+      }
+
+      function hydrateInviteSchoolOptions() {
+        const select = document.querySelector("#inviteSchool");
+        const current = select.value;
+        const schoolOptions = schools.map((school) => `<option>${school.name}</option>`).join("");
+        select.innerHTML = `<option>All Schools</option><option>3 Schools</option>${schoolOptions}`;
+        if ([...select.options].some((option) => option.value === current)) {
+          select.value = current;
+        }
+      }
+
+      function syncInviteDefaults() {
+        const role = document.querySelector("#inviteRole").value;
+        const status = document.querySelector("#inviteStatus");
+        const country = document.querySelector("#inviteCountry");
+        const school = document.querySelector("#inviteSchool");
+        const summary = document.querySelector("#inviteSummary");
+
+        if (role === "BiTS Student") {
+          status.value = "Pending";
+          if (school.value === "All Schools" || school.value === "3 Schools") {
+            const firstSchool = schools.find((item) => item.country === country.value) || schools[0];
+            if (firstSchool) school.value = firstSchool.name;
+          }
+          summary.textContent = "BiTS Student requests start as Pending and appear in BiTS Approval for teacher or manager approval.";
+          return;
+        }
+
+        if (role === "Super Admin") {
+          country.value = "All";
+          school.value = "All Schools";
+          status.value = "Invited";
+          summary.textContent = "Super Admin receives global visibility. Keep this rare. This is not candy.";
+          return;
+        }
+
+        status.value = "Invited";
+        summary.textContent = `${role} will be invited with scoped access to ${school.value}.`;
+      }
+
+      function openInviteModal() {
+        clearInviteErrors();
+        hydrateInviteSchoolOptions();
+        document.querySelector("#inviteForm").reset();
+        hydrateInviteSchoolOptions();
+        document.querySelector("#inviteRole").value = "Regional Manager";
+        document.querySelector("#inviteCountry").value = "Cambodia";
+        document.querySelector("#inviteSchool").value = "3 Schools";
+        syncInviteDefaults();
+        document.querySelector("#inviteModal").classList.add("show");
+        document.querySelector("#inviteName").focus();
+      }
+
+      function closeInviteModal() {
+        document.querySelector("#inviteModal").classList.remove("show");
+      }
+
+      function clearInviteErrors() {
+        document.querySelectorAll("[data-invite-error-for]").forEach((node) => {
+          node.textContent = "";
+        });
+      }
+
+      function setInviteError(name, message) {
+        const node = document.querySelector(`[data-invite-error-for="${name}"]`);
+        if (node) node.textContent = message;
+      }
+
+      function validateInviteForm(data) {
+        clearInviteErrors();
+        const errors = {};
+        if (!data.name.trim()) errors.name = "Name is required.";
+        if (!data.email.trim()) errors.email = "Email is required.";
+        if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errors.email = "Use a valid email.";
+        if (!data.role.trim()) errors.role = "Role is required.";
+        if (!data.country.trim()) errors.country = "Country is required.";
+        if (!data.school.trim()) errors.school = "School scope is required.";
+        if (users.some((user) => user.name.toLowerCase() === data.name.toLowerCase())) errors.name = "This user already exists.";
+        Object.entries(errors).forEach(([name, message]) => setInviteError(name, message));
+        return Object.keys(errors).length === 0;
+      }
+
+      function addInviteFromForm(event) {
+        event.preventDefault();
+        const form = new FormData(document.querySelector("#inviteForm"));
+        const nextUser = {
+          name: String(form.get("name") || "").trim(),
+          email: String(form.get("email") || "").trim(),
+          role: String(form.get("role") || "").trim(),
+          country: String(form.get("country") || "").trim(),
+          school: String(form.get("school") || "").trim(),
+          status: String(form.get("status") || "Invited")
+        };
+        if (nextUser.role === "BiTS Student") nextUser.status = "Pending";
+        if (!validateInviteForm(nextUser)) return;
+        users = [nextUser, ...users];
+        closeInviteModal();
+        render();
+        toast(`${nextUser.name} invited as ${nextUser.role}.`);
+      }
+
+      function openKnowledgeModal() {
+        document.querySelector("#knowledgeForm").reset();
+        document.querySelector("#knowledgeOwner").value = "Rain for All";
+        document.querySelector("#knowledgeStatus").value = "Published";
+        document.querySelectorAll("[data-knowledge-error-for]").forEach((node) => {
+          node.textContent = "";
+        });
+        document.querySelector("#knowledgeModal").classList.add("show");
+        document.querySelector("#knowledgeTitle").focus();
+      }
+
+      function closeKnowledgeModal() {
+        document.querySelector("#knowledgeModal").classList.remove("show");
+      }
+
+      function activityMediaItems(activity) {
+        if (activity.mediaItems && activity.mediaItems.length) return activity.mediaItems;
+        if (activity.images && activity.images.length) {
+          return activity.images.map((image, index) => ({
+            url: image,
+            type: "image",
+            name: `Photo ${index + 1}`
+          }));
+        }
+        return Array.from({ length: Math.max(1, Number(activity.media || 1)) }, (_, index) => ({
+          url: "",
+          type: "image",
+          name: `Photo ${index + 1}`
+        }));
+      }
+
+      function activityImageGrid(activity) {
+        const items = activityMediaItems(activity);
+        return `
+          <div class="activity-image-grid">
+            ${items.slice(0, 6).map((item, index) => {
+              if (item.url && /^(https?:|blob:|data:)/.test(String(item.url))) {
+                if (item.type === "video") {
+                  return `<div class="activity-image"><video src="${item.url}" muted controls aria-label="${escapeHtml(item.name || `Video ${index + 1}`)}"></video></div>`;
+                }
+                return `<div class="activity-image"><img src="${item.url}" alt="${escapeHtml(item.name || `${activity.title} image ${index + 1}`)}" /></div>`;
+              }
+              return `<div class="activity-image"><span>${escapeHtml(item.name || `Media ${index + 1}`)}</span></div>`;
+            }).join("")}
+          </div>
+        `;
+      }
+
+      function renderActivityReviewContent() {
+        const activity = activities[selectedActivityIndex];
+        if (!activity) return;
+        document.querySelector("#activityReviewTitle").textContent = editingActivity ? "Edit Activity" : "Activity Review";
+        document.querySelector("#editActivityPost").textContent = editingActivity ? "Save Edit" : "Edit";
+        document.querySelector("#confirmActivityReview").textContent = editingActivity ? "Cancel Edit" : "Done";
+
+        if (editingActivity) {
+          document.querySelector("#activityReviewContent").innerHTML = `
+            <div class="activity-edit-form">
+              <div class="form-field full">
+                <label for="activityEditTitle">Title</label>
+                <input id="activityEditTitle" value="${escapeHtml(activity.title)}" />
+              </div>
+              <div class="form-field full">
+                <label for="activityEditBody">Content</label>
+                <textarea id="activityEditBody">${escapeHtml(activity.body || "")}</textarea>
+              </div>
+              <div class="form-field full">
+                <label for="activityEditMedia">Photos / Videos</label>
+                <input id="activityEditMedia" type="file" accept="image/*,video/*" multiple />
+                <small>Upload new photos or videos to replace the current media.</small>
+              </div>
+              ${activityImageGrid(activity)}
+            </div>
+          `;
+          return;
+        }
+
+        document.querySelector("#activityReviewContent").innerHTML = `
+          <div class="activity-review-summary">
+            <h3>${escapeHtml(activity.title)}</h3>
+          </div>
+          <p class="activity-post-body">${escapeHtml(activity.body || "No body text was submitted for this activity post.")}</p>
+          ${activityImageGrid(activity)}
+        `;
+      }
+
+      function openActivityReview(index) {
+        selectedActivityIndex = Number(index);
+        editingActivity = false;
+        const activity = activities[selectedActivityIndex];
+        if (!activity) {
+          toast("Activity post not found.");
+          return;
+        }
+        renderActivityReviewContent();
+        document.querySelector("#activityReviewModal").classList.add("show");
+        document.querySelector("#confirmActivityReview").focus();
+      }
+
+      function closeActivityReviewModal() {
+        selectedActivityIndex = null;
+        editingActivity = false;
+        document.querySelector("#activityReviewModal").classList.remove("show");
+      }
+
+      function confirmActivityReview() {
+        if (editingActivity) {
+          editingActivity = false;
+          renderActivityReviewContent();
+          return;
+        }
+        const activity = activities[selectedActivityIndex];
+        closeActivityReviewModal();
+        toast(`${activity ? activity.title : "Activity"} reviewed.`);
+      }
+
+      function editActivityPost() {
+        const activity = activities[selectedActivityIndex];
+        if (!activity) return;
+        if (!editingActivity) {
+          editingActivity = true;
+          renderActivityReviewContent();
+          document.querySelector("#activityEditTitle").focus();
+          return;
+        }
+        const nextTitle = document.querySelector("#activityEditTitle").value.trim();
+        const nextBody = document.querySelector("#activityEditBody").value.trim();
+        const nextMediaItems = uploadedMediaItems(document.querySelector("#activityEditMedia"));
+        if (!nextTitle) {
+          toast("Activity title is required.");
+          return;
+        }
+        activities[selectedActivityIndex] = {
+          ...activity,
+          title: nextTitle,
+          body: nextBody,
+          ...(nextMediaItems.length ? { mediaItems: nextMediaItems, images: [], media: nextMediaItems.length } : {})
+        };
+        editingActivity = false;
+        renderActivityReviewContent();
+        document.querySelector("#page").innerHTML = renderPage();
+        bindPageEvents();
+        toast(`${nextTitle} updated.`);
+      }
+
+      function deleteReviewedActivity() {
+        const activity = activities[selectedActivityIndex];
+        if (!activity) {
+          closeActivityReviewModal();
+          return;
+        }
+        if (!window.confirm(`Delete "${activity.title}"? This cannot be undone in this prototype.`)) return;
+        activities = activities.filter((_, index) => index !== selectedActivityIndex);
+        closeActivityReviewModal();
+        render();
+        toast(`${activity.title} deleted.`);
+      }
+
+      function addKnowledgeFromForm(event) {
+        event.preventDefault();
+        const form = new FormData(document.querySelector("#knowledgeForm"));
+        const title = String(form.get("title") || "").trim();
+        const imageFiles = Array.from(document.querySelector("#knowledgeImages").files || []);
+        if (!title) {
+          document.querySelector('[data-knowledge-error-for="title"]').textContent = "Title is required.";
+          return;
+        }
+        knowledgePosts = [{
+          title,
+          category: String(form.get("category") || "Knowledge"),
+          owner: String(form.get("owner") || "Rain for All").trim() || "Rain for All",
+          status: String(form.get("status") || "Published"),
+          comments: 0,
+          body: String(form.get("body") || "").trim(),
+          images: imageFiles.map((file) => URL.createObjectURL(file))
+        }, ...knowledgePosts];
+        closeKnowledgeModal();
+        render();
+        toast(`${title} added to Knowledge Hub.`);
+      }
+
+      function openNotificationModal() {
+        document.querySelector("#notificationForm").reset();
+        document.querySelector("#notificationAudience").value = "Regional Manager";
+        document.querySelector("#notificationStatus").value = "Active";
+        document.querySelectorAll("[data-notification-error-for]").forEach((node) => {
+          node.textContent = "";
+        });
+        document.querySelector("#notificationModal").classList.add("show");
+        document.querySelector("#notificationName").focus();
+      }
+
+      function closeNotificationModal() {
+        document.querySelector("#notificationModal").classList.remove("show");
+      }
+
+      function addNotificationFromForm(event) {
+        event.preventDefault();
+        const form = new FormData(document.querySelector("#notificationForm"));
+        const nextRule = {
+          name: String(form.get("name") || "").trim(),
+          trigger: String(form.get("trigger") || "").trim(),
+          audience: String(form.get("audience") || "Regional Manager"),
+          status: String(form.get("status") || "Active")
+        };
+        document.querySelectorAll("[data-notification-error-for]").forEach((node) => {
+          node.textContent = "";
+        });
+        if (!nextRule.name) {
+          document.querySelector('[data-notification-error-for="name"]').textContent = "Rule name is required.";
+          return;
+        }
+        if (!nextRule.trigger) {
+          document.querySelector('[data-notification-error-for="trigger"]').textContent = "Trigger is required.";
+          return;
+        }
+        notificationRules = [nextRule, ...notificationRules];
+        closeNotificationModal();
+        render();
+        toast(`${nextRule.name} rule created.`);
+      }
+
+      function bindPageEvents() {
+        const search = document.querySelector("#schoolSearch");
+        if (search) {
+          search.addEventListener("input", (event) => {
+            schoolQuery = event.target.value;
+            document.querySelector("#page").innerHTML = renderPage();
+            bindPageEvents();
+          });
+        }
+        document.querySelectorAll("[data-approve]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => {
+            const user = users.find((item) => item.name === button.dataset.approve);
+            if (user) user.status = "Active";
+            toast(`${button.dataset.approve} approved as BiTS Student.`);
+            render();
+          });
+        });
+        document.querySelectorAll("[data-reject]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => {
+            const user = users.find((item) => item.name === button.dataset.reject);
+            if (user) user.status = "Rejected";
+            toast(`${button.dataset.reject} rejected.`);
+            render();
+          });
+        });
+        document.querySelectorAll("[data-delete-activity]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => {
+            const index = Number(button.dataset.deleteActivity);
+            const removed = activities[index];
+            if (!removed) return;
+            if (!window.confirm(`Delete "${removed.title}"? This cannot be undone in this prototype.`)) return;
+            activities = activities.filter((_, itemIndex) => itemIndex !== index);
+            render();
+            toast(`${removed.title} deleted.`);
+          });
+        });
+        document.querySelectorAll("[data-review-activity]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => openActivityReview(button.dataset.reviewActivity));
+        });
+        document.querySelectorAll("[data-bits-tab]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => {
+            bitsTab = button.dataset.bitsTab;
+            render();
+          });
+        });
+        document.querySelectorAll("[data-filter]").forEach((field) => {
+          field.value = dataFilters[field.dataset.filter] || field.value;
+          if (field.dataset.bound === "true") return;
+          field.dataset.bound = "true";
+          field.addEventListener("change", () => {
+            dataFilters[field.dataset.filter] = field.value;
+            document.querySelector("#page").innerHTML = renderPage();
+            bindPageEvents();
+          });
+        });
+        document.querySelectorAll("[data-review-records]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => openDataGraph(button.dataset.reviewRecords));
+        });
+        document.querySelectorAll("[data-edit-points]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => openPointsModal(button.dataset.editPoints));
+        });
+        document.querySelectorAll("[data-view-school]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => openSchoolDrawer(button.dataset.viewSchool));
+        });
+        const drawerClose = document.querySelector("#closeSchoolDrawer");
+        if (drawerClose && drawerClose.dataset.bound !== "true") {
+          drawerClose.dataset.bound = "true";
+          drawerClose.addEventListener("click", closeSchoolDrawer);
+        }
+        document.querySelectorAll("[data-edit-school]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => {
+            if (!button.dataset.editSchool) {
+              toast("School profile is not connected yet.");
+              return;
+            }
+            closeSchoolDrawer();
+            openSchoolModal(button.dataset.editSchool);
+          });
+        });
+        document.querySelectorAll("[data-jump]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => {
+            closeSchoolDrawer();
+            active = button.dataset.jump;
+            render();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+        });
+        document.querySelectorAll("[data-action]").forEach((button) => {
+          if (button.dataset.bound === "true") return;
+          button.dataset.bound = "true";
+          button.addEventListener("click", () => {
+            if (button.dataset.action === "school") {
+              openSchoolModal();
+              return;
+            }
+            if (button.dataset.action === "invite") {
+              openInviteModal();
+              return;
+            }
+            if (button.dataset.action === "knowledge") {
+              openKnowledgeModal();
+              return;
+            }
+            if (button.dataset.action === "notification") {
+              openNotificationModal();
+              return;
+            }
+            toast("Prototype action captured. Wire this to API in production.");
+          });
+        });
+      }
+
+      document.querySelector("#schoolForm").addEventListener("submit", addSchoolFromForm);
+      document.querySelector("#closeSchoolModal").addEventListener("click", closeSchoolModal);
+      document.querySelector("#cancelSchool").addEventListener("click", closeSchoolModal);
+      document.querySelector("#schoolModal").addEventListener("click", (event) => {
+        if (event.target.id === "schoolModal") closeSchoolModal();
+      });
+      document.querySelector("#schoolDrawerBackdrop").addEventListener("click", closeSchoolDrawer);
+      document.querySelector("#closeDataGraphModal").addEventListener("click", closeDataGraphModal);
+      document.querySelector("#doneDataGraph").addEventListener("click", closeDataGraphModal);
+      document.querySelector("#dataGraphModal").addEventListener("click", (event) => {
+        if (event.target.id === "dataGraphModal") closeDataGraphModal();
+      });
+      document.querySelector("#pointsForm").addEventListener("submit", savePointsFromForm);
+      document.querySelector("#closePointsModal").addEventListener("click", closePointsModal);
+      document.querySelector("#cancelPoints").addEventListener("click", closePointsModal);
+      document.querySelector("#pointsModal").addEventListener("click", (event) => {
+        if (event.target.id === "pointsModal") closePointsModal();
+      });
+      document.querySelector("#inviteForm").addEventListener("submit", addInviteFromForm);
+      document.querySelector("#closeInviteModal").addEventListener("click", closeInviteModal);
+      document.querySelector("#cancelInvite").addEventListener("click", closeInviteModal);
+      document.querySelector("#inviteModal").addEventListener("click", (event) => {
+        if (event.target.id === "inviteModal") closeInviteModal();
+      });
+      document.querySelector("#knowledgeForm").addEventListener("submit", addKnowledgeFromForm);
+      document.querySelector("#closeKnowledgeModal").addEventListener("click", closeKnowledgeModal);
+      document.querySelector("#cancelKnowledge").addEventListener("click", closeKnowledgeModal);
+      document.querySelector("#knowledgeModal").addEventListener("click", (event) => {
+        if (event.target.id === "knowledgeModal") closeKnowledgeModal();
+      });
+      document.querySelector("#closeActivityReviewModal").addEventListener("click", closeActivityReviewModal);
+      document.querySelector("#confirmActivityReview").addEventListener("click", confirmActivityReview);
+      document.querySelector("#editActivityPost").addEventListener("click", editActivityPost);
+      document.querySelector("#deleteReviewedActivity").addEventListener("click", deleteReviewedActivity);
+      document.querySelector("#activityReviewModal").addEventListener("click", (event) => {
+        if (event.target.id === "activityReviewModal") closeActivityReviewModal();
+      });
+      document.querySelector("#notificationForm").addEventListener("submit", addNotificationFromForm);
+      document.querySelector("#closeNotificationModal").addEventListener("click", closeNotificationModal);
+      document.querySelector("#cancelNotification").addEventListener("click", closeNotificationModal);
+      document.querySelector("#notificationModal").addEventListener("click", (event) => {
+        if (event.target.id === "notificationModal") closeNotificationModal();
+      });
+      document.querySelector("#inviteRole").addEventListener("change", syncInviteDefaults);
+      document.querySelector("#inviteCountry").addEventListener("change", syncInviteDefaults);
+      document.querySelector("#inviteSchool").addEventListener("change", syncInviteDefaults);
+
+      function render() {
+        document.querySelector("#pageTitle").textContent = active;
+        renderNav();
+        document.querySelector("#page").innerHTML = renderPage();
+        bindPageEvents();
+      }
+
+      render();
+    </script>
+  </body>
+</html>
